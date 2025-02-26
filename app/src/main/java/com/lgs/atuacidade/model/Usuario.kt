@@ -1,8 +1,11 @@
 package com.lgs.atuacidade.model
 
+import com.google.firebase.firestore.DocumentId
 import java.time.LocalDate
 
 data class Usuario(
+
+    @DocumentId
     val idUsuario: String?,
     val nome: String,
     val cpf: String,
