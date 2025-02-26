@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "513403697514",
+    "project_id": "atuacidade",
+    "storage_bucket": "atuacidade.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:513403697514:android:7f441fcaf57bbc3d4d0d13",
+        "android_client_info": {
+          "package_name": "br.edu.ifpb.pdm.atuacidade"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeIe3gOLEoH3a1nB1K6KpDXIu8X40yKPI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
