@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Atuacidade"
+rootProject.name = "atuacidade"
 include(":app")
  

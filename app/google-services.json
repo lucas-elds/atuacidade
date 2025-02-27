@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:513403697514:android:7f441fcaf57bbc3d4d0d13",
+        "mobilesdk_app_id": "1:513403697514:android:b101c182a928ae9e4d0d13",
         "android_client_info": {
-          "package_name": "br.edu.ifpb.pdm.atuacidade"
+          "package_name": "br.edu.ifpb.atuacidade"
         }
       },
       "oauth_client": [],
