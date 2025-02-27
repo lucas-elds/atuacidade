@@ -3,6 +3,7 @@ package br.edu.ifpb.atuacidade.ui.util
 import android.graphics.Bitmap
 import android.icu.text.SimpleDateFormat
 import android.util.Base64
+import androidx.compose.ui.text.input.TextFieldValue
 import br.edu.ifpb.atuacidade.model.service.UsuarioDAO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -29,29 +30,66 @@ fun validarCPF(cpf: String): Boolean {
     return true
 }
 
-fun validarCadastro(cpf: String, username: String, senha: String, dataNascimento: String, callback: (List<String?>) -> Unit) {
-    val cpfErro = if (validarCPF(cpf)) null else "CPF inválido"
-    val usernameErro = if (username.length >= 6) null else "Username deve ter pelo menos 6 caracteres"
-    val senhaErro = if (senha.length >= 8 && senha.any { it.isLetter() } && senha.any { it.isDigit() })
-        null else "Senha deve ter pelo menos 8 caracteres alfanuméricos"
-
-    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    dateFormat.isLenient = false
-    val dataNascimentoErro = try {
-        dateFormat.parse(dataNascimento)
-        null
+fun validarDataNascimento(dataNascimento: TextFieldValue): Boolean {
+    return try {
+        val dataString = dataNascimento.text
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        dateFormat.isLenient = false
+        dateFormat.parse(dataString)
+        true
     } catch (e: Exception) {
-        "Data inválida! Use dd/MM/yyyy."
+        false
+    }
+}
+
+fun validarUsername(username: String, callback: (String?) -> Unit) {
+    if (username.length < 6) {
+        callback("Username deve ter pelo menos 6 caracteres")
+        return
     }
 
     val usuarioDAO = UsuarioDAO()
-
     usuarioDAO.buscarPorUsername(username) { usuario ->
-        val usernameDisponivelErro = if (usuario == null) null else "Username já está em uso"
-
-        callback(listOf(cpfErro, usernameErro, usernameDisponivelErro, senhaErro, dataNascimentoErro))
+        if (usuario != null) {
+            callback("Username já está em uso")
+        } else {
+            callback(null)
+        }
     }
 }
+
+fun validarSenha(senha: String): String? {
+    return if (senha.length >= 8 && senha.any { it.isLetter() } && senha.any { it.isDigit() }) {
+        null
+    } else {
+        "Senha deve ter pelo menos 8 caracteres alfanuméricos"
+    }
+}
+
+//fun validarCadastro(cpf: String, username: String, senha: String, dataNascimento: TextFieldValue, callback: (List<String?>) -> Unit) {
+//    val cpfErro = if (validarCPF(cpf)) null else "CPF inválido"
+//    val usernameErro = if (username.length >= 6) null else "Username deve ter pelo menos 6 caracteres"
+//    val senhaErro = if (senha.length >= 8 && senha.any { it.isLetter() } && senha.any { it.isDigit() })
+//        null else "Senha deve ter pelo menos 8 caracteres alfanuméricos"
+//
+//    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+//    dateFormat.isLenient = false
+//    val dataNascimentoErro = try {
+//        val dataString = dataNascimento.text
+//        dateFormat.parse(dataString)
+//        null
+//    } catch (e: Exception) {
+//        "Data inválida! Use dd/MM/yyyy."
+//    }
+//
+//    val usuarioDAO = UsuarioDAO()
+//
+//    usuarioDAO.buscarPorUsername(username) { usuario ->
+//        val usernameDisponivelErro = if (usuario == null) null else "Username já está em uso"
+//
+//        callback(listOf(cpfErro, usernameErro, usernameDisponivelErro, senhaErro, dataNascimentoErro))
+//    }
+//}
 
 suspend fun buscarCep(cep: String): Map<String, String> {
     return if (cep.length == 8) {
