@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="br.edu.ifpb.atuacidade" />
+                  <option name="mobileSdkAppId" value="1:513403697514:android:b101c182a928ae9e4d0d13" />
+                  <option name="projectId" value="atuacidade" />
+                  <option name="projectNumber" value="513403697514" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

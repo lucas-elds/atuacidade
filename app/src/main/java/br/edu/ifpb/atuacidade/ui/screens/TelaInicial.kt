@@ -57,7 +57,7 @@ fun AppNavegacao() {
     val navController = rememberNavController()
 
     NavHost(navController = navController,
-        startDestination = "inicial",
+        startDestination = "home",
         enterTransition = {
             EnterTransition.None
         },
@@ -65,6 +65,7 @@ fun AppNavegacao() {
             ExitTransition.None
         }
     ) {
+        composable("home") { TelaHome(navController) }
         composable("inicial") { TelaInicial(navController) }
         composable("login") { TelaLogin(navController) }
         composable("perfil") { TelaPerfil(navController) }

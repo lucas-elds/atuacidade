@@ -17,12 +17,14 @@ import com.google.firebase.FirebaseApp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
+import br.edu.ifpb.atuacidade.ui.screens.TelaHome
 import br.edu.ifpb.atuacidade.ui.screens.TelaCadastro
 import br.edu.ifpb.atuacidade.ui.screens.TelaCriacaoPost
 import br.edu.ifpb.atuacidade.ui.screens.TelaInicial
 import br.edu.ifpb.atuacidade.ui.screens.TelaLogin
 import br.edu.ifpb.atuacidade.ui.screens.TelaPerfil
 import br.edu.ifpb.atuacidade.ui.screens.TelaPrincipal
+
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -46,7 +48,7 @@ fun AppNavegacao() {
     val navController = rememberNavController()
 
     NavHost(navController = navController,
-        startDestination = "inicial",
+        startDestination = "home",
         enterTransition = {
             EnterTransition.None
         },
@@ -54,6 +56,7 @@ fun AppNavegacao() {
             ExitTransition.None
         }
     ) {
+        composable("home") {TelaHome(navController) }
         composable("inicial") { TelaInicial(navController) }
         composable("cadastro") { TelaCadastro(navController) } // Passando o navController
         composable("login") { TelaLogin(navController) } // Passando o navController
