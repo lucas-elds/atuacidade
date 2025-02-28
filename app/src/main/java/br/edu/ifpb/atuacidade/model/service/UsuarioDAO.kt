@@ -63,25 +63,18 @@ class UsuarioDAO {
     }
 
     fun buscarPorUsername(username: String, callback: (Usuario?) -> Unit) {
-        val db = FirebaseFirestore.getInstance()
-
-        db.collection("usuarios")
-            .whereEqualTo("username", username)
-            .limit(1)
-            .get()
-            .addOnSuccessListener { documents ->
-                // Obtendo o primeiro documento ou null se não houver
-                val usuario = documents.firstOrNull()?.toObject(Usuario::class.java)?.apply {
-                    id = documents.first().id // Atribuindo o ID do documento
+        db.collection("usuarios").whereEqualTo("username", username).get()
+            .addOnSuccessListener { document ->
+                if (!document.isEmpty) {
+                    val usuario = document.documents[0].toObject<Usuario>()
+                    callback(usuario)
+                } else {
+                    callback(null)
                 }
-                callback(usuario) // Retorna o usuário encontrado ou null
             }
             .addOnFailureListener {
-                callback(null) // Retorna null em caso de falha
+                callback(null)
             }
     }
-
-
-
 
 }

@@ -2,6 +2,7 @@ package br.edu.ifpb.atuacidade.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -33,9 +34,10 @@ fun TelaLogin(navController: NavController) {
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
-            label = { Text("Username") },
+            label = { Text("Nome de usuário") },
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp)
         )
 
         OutlinedTextField(
@@ -44,7 +46,8 @@ fun TelaLogin(navController: NavController) {
             label = { Text("Senha") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -54,7 +57,7 @@ fun TelaLogin(navController: NavController) {
                 if (username.isNotBlank() && senha.isNotBlank()) {
                     usuarioDAO.buscarPorUsername(username) { usuario ->
                         if (usuario != null && usuario.senha == senha) {
-                            navController.navigate("principal") // Navega para a tela principal
+                            navController.navigate("principal")
                             Toast.makeText(context, "Login bem-sucedido!", Toast.LENGTH_SHORT).show()
                         } else {
                             Toast.makeText(context, "Usuário ou senha incorretos", Toast.LENGTH_SHORT).show()
