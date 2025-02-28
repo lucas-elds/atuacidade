@@ -456,6 +456,12 @@ fun TelaCadastro(navController: NavController, modifier: Modifier) {
                 }, modifier = Modifier.fillMaxWidth().offset(y = (-20).dp)) {
                 Text("Cadastrar")
             }
+
+            TextButton(
+                onClick = { navController.navigate("login") },
+                modifier = Modifier.fillMaxWidth()
+            ) { Text("Já tem uma conta? Entre agora.") }
+
         }
     }
 }

@@ -81,6 +81,11 @@ fun TelaLogin(navController: NavController, modifier: Modifier) {
             ) {
                 Text(text = "Entrar")
             }
+
+            TextButton(
+                onClick = { navController.navigate("cadastro") },
+                modifier = Modifier.fillMaxWidth()
+            ) { Text("Não tem uma conta? Cadastre-se agora.") }
         }
     }
 }
