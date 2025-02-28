@@ -22,6 +22,7 @@ fun TelaLogin(navController: NavController, modifier: Modifier) {
     val context = LocalContext.current
     var username by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
+    var carregando by remember { mutableStateOf(false) }
     val usuarioDAO = UsuarioDAO()
 
     Box(
@@ -72,7 +73,9 @@ fun TelaLogin(navController: NavController, modifier: Modifier) {
             Button(
                 onClick = {
                     if (username.isNotBlank() && senha.isNotBlank()) {
+                        carregando = true
                         usuarioDAO.buscarPorUsername(username) { usuario ->
+                            carregando = false
                             if (usuario != null && usuario.senha == senha) {
                                 SessaoUsuario.usuarioLogado = usuario
                                 navController.navigate("principal")
@@ -91,9 +94,14 @@ fun TelaLogin(navController: NavController, modifier: Modifier) {
                             .show()
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !carregando
             ) {
-                Text(text = "Entrar")
+                if (carregando) {
+                    CircularProgressIndicator()
+                } else {
+                    Text(text = "Entrar")
+                }
             }
 
             TextButton(

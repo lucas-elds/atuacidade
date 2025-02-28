@@ -59,6 +59,8 @@ fun TelaCadastro(navController: NavController, modifier: Modifier) {
     var usernameErro by remember { mutableStateOf<String?>(null) }
     var senhaErro by remember { mutableStateOf<String?>(null) }
     var dataNascimentoErro by remember { mutableStateOf<String?>(null) }
+    var cpfCadastradoErro by remember { mutableStateOf<String?>(null) }
+    var usernameCadastradoErro by remember { mutableStateOf<String?>(null) }
 
     val context = LocalContext.current
 
@@ -113,6 +115,7 @@ fun TelaCadastro(navController: NavController, modifier: Modifier) {
                     OutlinedTextField(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .weight(0.5f)
                             .onFocusChanged { focusState ->
                                 if (!focusState.isFocused) {
                                     if (cpf.length in 1..10 || cpf.length > 11) {
@@ -123,7 +126,8 @@ fun TelaCadastro(navController: NavController, modifier: Modifier) {
                         value = cpf,
                         onValueChange = {
                             cpf = it
-                            if(cpf.length == 11){
+                            cpfErro = null
+                            if (cpf.length == 11) {
                                 cpfErro = if (validarCPF(it)) {
                                     null
                                 } else {
@@ -131,11 +135,11 @@ fun TelaCadastro(navController: NavController, modifier: Modifier) {
                                 }
                             }
 
-                            if(cpf.length > 11){
+                            if (cpf.length > 11) {
                                 cpfErro = "CPF inválido"
                             }
 
-                            if(cpf.isEmpty()){
+                            if (cpf.isEmpty()) {
                                 cpfErro = "Informe um CPF"
                             }
                         },
@@ -216,6 +220,7 @@ fun TelaCadastro(navController: NavController, modifier: Modifier) {
                     OutlinedTextField(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .weight(0.5f)
                             .onFocusChanged { focusState ->
                                 if (!focusState.isFocused) {
                                     if (username.length in 1..5) {
@@ -234,6 +239,7 @@ fun TelaCadastro(navController: NavController, modifier: Modifier) {
                         value = username,
                         onValueChange = {
                             username = it
+                            usernameErro = null
                             if (username.length == 6) {
                                 usernameErro = null
                             }
@@ -458,17 +464,36 @@ fun TelaCadastro(navController: NavController, modifier: Modifier) {
             Button(
                 enabled = todosValidos(),
                 onClick = {
-                    if(todosValidos()){
+                    if (todosValidos()) {
                         val endereco = Endereco(cep, rua, numero, bairro, cidade, estado)
                         val dataString = dataNascimento.text
                         val usuario = Usuario("", nome, cpf, dataString, endereco, username, senha, "")
 
                         val usuarioDAO = UsuarioDAO()
-                        usuarioDAO.adicionar(usuario) { novoUsuario ->
-                            Toast.makeText(context, if (novoUsuario != null) "Cadastro realizado com sucesso!" else "Erro ao cadastrar.", Toast.LENGTH_LONG).show()
+                        usuarioDAO.adicionar(usuario) { sucesso, mensagemErro ->
+                            if (sucesso) {
+                                Toast.makeText(context, "Cadastro realizado com sucesso!", Toast.LENGTH_LONG).show()
+                                navController.navigate("login") // Redireciona para a tela de login após o cadastro
+                            } else {
+                                when (mensagemErro) {
+                                    "CPF já cadastrado" -> {
+                                        cpfErro = mensagemErro
+                                        Toast.makeText(context, mensagemErro, Toast.LENGTH_LONG).show()
+                                    }
+                                    "Username já cadastrado" -> {
+                                        usernameErro = mensagemErro
+                                        Toast.makeText(context, mensagemErro, Toast.LENGTH_LONG).show()
+                                    }
+                                    else -> {
+                                        Toast.makeText(context, mensagemErro ?: "Erro ao cadastrar.", Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                            }
                         }
                     }
-                }, modifier = Modifier.fillMaxWidth().offset(y = (-20).dp)) {
+                },
+                modifier = Modifier.fillMaxWidth().offset(y = (-20).dp)
+            ) {
                 Text("Cadastrar")
             }
 

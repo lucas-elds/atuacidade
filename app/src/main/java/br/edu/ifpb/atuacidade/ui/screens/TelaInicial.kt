@@ -77,9 +77,11 @@ fun AppNavegacao(modifier: Modifier = Modifier) {
                     navController.navigate("principal") {
                         popUpTo("postagens") { inclusive = true }
                     }
-                }
+                },
+                onVoltar = { navController.popBackStack() } // Adiciona ação de voltar
             )
         }
+
         composable("principal") { TelaPrincipal(navController, modifier) }
     }
 }

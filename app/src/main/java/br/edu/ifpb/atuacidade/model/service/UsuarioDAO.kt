@@ -51,19 +51,48 @@ class UsuarioDAO {
             }
     }
 
-    fun adicionar(usuario: Usuario, callback: (Usuario?) -> Unit) {
-        db.collection("usuarios").add(usuario)
-            .addOnSuccessListener { documentReference ->
-                val novoUsuario = usuario.copy(id = documentReference.id)
-                callback(novoUsuario)
+    fun adicionar(usuario: Usuario, callback: (Boolean, String?) -> Unit) {
+        // Verifica se o CPF já está cadastrado
+        buscarPorCpf(usuario.cpf) { usuarioComCpf ->
+            if (usuarioComCpf != null) {
+                callback(false, "CPF já cadastrado")
+            } else {
+                // Verifica se o username já está cadastrado
+                buscarPorUsername(usuario.username) { usuarioComUsername ->
+                    if (usuarioComUsername != null) {
+                        callback(false, "Nome de usuário já cadastrado")
+                    } else {
+                        db.collection("usuarios").add(usuario)
+                            .addOnSuccessListener { documentReference ->
+                                val novoUsuario = usuario.copy(id = documentReference.id)
+                                callback(true, null)
+                            }
+                            .addOnFailureListener {
+                                callback(false, "Erro ao cadastrar usuário")
+                            }
+                    }
+                }
+            }
+        }
+    }
+
+    fun buscarPorUsername(username: String, callback: (Usuario?) -> Unit) {
+        db.collection("usuarios").whereEqualTo("username", username).get()
+            .addOnSuccessListener { document ->
+                if (!document.isEmpty) {
+                    val usuario = document.documents[0].toObject<Usuario>()
+                    callback(usuario)
+                } else {
+                    callback(null)
+                }
             }
             .addOnFailureListener {
                 callback(null)
             }
     }
 
-    fun buscarPorUsername(username: String, callback: (Usuario?) -> Unit) {
-        db.collection("usuarios").whereEqualTo("username", username).get()
+    fun buscarPorCpf(cpf: String, callback: (Usuario?) -> Unit) {
+        db.collection("usuarios").whereEqualTo("cpf", cpf).get()
             .addOnSuccessListener { document ->
                 if (!document.isEmpty) {
                     val usuario = document.documents[0].toObject<Usuario>()
