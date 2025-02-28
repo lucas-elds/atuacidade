@@ -11,12 +11,11 @@ data class Usuario(
     val cpf: String = "",
     val dataNascimento: String = "",
     val endereco: Endereco? = null,
-    val genero: String = "",
     val username: String = "",
     val senha: String = "",
     val fotoPerfil: String = ""
 ) {
-    constructor() : this("", "", "", "", null, "", "", "", "")
+    constructor() : this("", "", "", "", null, "", "", "")
 }
 
 
