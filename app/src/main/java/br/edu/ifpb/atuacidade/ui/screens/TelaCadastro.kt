@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -358,21 +359,35 @@ fun TelaCadastro(navController: NavController, modifier: Modifier) {
             }
 
             val url = "http://www.buscacep.correios.com.br/"
-            Text(
-                text = "Descubra aqui o seu CEP.",
-                fontSize = 13.sp,
-                color = Color.Cyan,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
                 modifier = Modifier
                     .offset(y = (-10).dp)
                     .padding(start = 5.dp)
                     .fillMaxWidth()
                     .wrapContentWidth(Alignment.Start)
                     .clickable {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    context.startActivity(intent)
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                        context.startActivity(intent)
 
-                }
-            )
+                    }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Ícone de Busca",
+                    tint = Color.Cyan,
+                    modifier = Modifier.size(13.dp)
+                )
+                Text(
+                    text = "Descubra aqui o seu CEP.",
+                    fontSize = 13.sp,
+                    color = Color.Cyan,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentWidth(Alignment.Start)
+                )
+            }
 
             Row(modifier = Modifier.fillMaxWidth().offset(y = (-20).dp), horizontalArrangement = Arrangement.spacedBy(8.dp)){
                 OutlinedTextField(
