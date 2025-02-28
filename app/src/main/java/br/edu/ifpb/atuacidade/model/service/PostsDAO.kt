@@ -1,5 +1,6 @@
 package br.edu.ifpb.atuacidade.model.service
 
+import android.util.Log
 import br.edu.ifpb.atuacidade.model.Post
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
@@ -50,10 +51,12 @@ class PostsDAO {
     fun adicionar(post: Post, callback: (Post?) -> Unit) {
         db.collection("posts").add(post)
             .addOnSuccessListener { documentReference ->
+                Log.d("PostsDAO", "Postagem salva com ID: ${documentReference.id}")
                 val novoPost = post.copy(id = documentReference.id)
                 callback(novoPost)
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
+                Log.e("PostsDAO", "Erro ao salvar postagem", e)
                 callback(null)
             }
     }

@@ -11,11 +11,13 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-//import br.edu.ifpb.atuacidade.ui.TelaCriacaoPost
+import androidx.lifecycle.viewmodel.compose.viewModel
+import br.edu.ifpb.atuacidade.model.Usuario
+
 
 
 @Composable
-fun TelaInicial(navController: NavController, modifier: Modifier) {
+fun TelaInicial(navController: NavController, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -40,7 +42,7 @@ fun TelaInicial(navController: NavController, modifier: Modifier) {
         ) { Text("Tela Perfil") }
 
         Button(
-            onClick = { navController.navigate("criacaoPost") },
+            onClick = { navController.navigate("postagens") }, // Alterado para "postagens"
             modifier = Modifier.fillMaxWidth()
         ) { Text("Tela Criação de Post") }
 
@@ -53,34 +55,35 @@ fun TelaInicial(navController: NavController, modifier: Modifier) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavegacao(modifier: Modifier) {
+fun AppNavegacao(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController,
+    NavHost(
+        navController = navController,
         startDestination = "home",
-        enterTransition = {
-            EnterTransition.None
-        },
-        exitTransition = {
-            ExitTransition.None
-        }
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None }
     ) {
         composable("home") { TelaHome(navController, modifier) }
         composable("inicial") { TelaInicial(navController, modifier) }
         composable("login") { TelaLogin(navController, modifier) }
         composable("perfil") { TelaPerfil(navController, modifier) }
         composable("cadastro") { TelaCadastro(navController, modifier) }
-        composable("criacaoPost") {
-            TelaCriacaoPost(
-                onPostCreated = { post ->
-                    println("Post criado: $post")
-                    // Voltar para a tela anterior após criar o post
-                    navController.popBackStack()
-                },
-                modifier = modifier
+        composable("postagens") {
+            val viewModel: PostagemViewModel = viewModel()
+            TelaPostagens(
+                viewModel = viewModel,
+                onSucesso = {
+                    navController.navigate("principal") {
+                        popUpTo("postagens") { inclusive = true }
+                    }
+                }
             )
         }
-        composable("principal") { TelaPrincipal(navController, modifier) }  // Aqui, adicionando a tela principal
+        composable("principal") { TelaPrincipal(navController, modifier) }
     }
 }
+
+
+
 

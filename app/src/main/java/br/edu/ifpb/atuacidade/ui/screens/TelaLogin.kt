@@ -68,6 +68,7 @@ fun TelaLogin(navController: NavController, modifier: Modifier) {
                         usuarioDAO.buscarPorUsername(username) { usuario ->
                             if (usuario != null && usuario.senha == senha) {
                                 navController.navigate("principal")
+                                SessaoUsuario.usuarioLogado = usuario
                                 Toast.makeText(context, "Login bem-sucedido!", Toast.LENGTH_SHORT).show()
                             } else {
                                 Toast.makeText(context, "Usuário ou senha incorretos", Toast.LENGTH_SHORT).show()
