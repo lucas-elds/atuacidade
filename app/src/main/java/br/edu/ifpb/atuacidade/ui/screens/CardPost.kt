@@ -55,26 +55,33 @@ fun CardPost(post: Post, upvoteDAO: UpvoteDAO, downvoteDAO: DownvoteDAO, postDAO
     fun realizarUpvote() {
         if (usuarioLogadoId != null) {
             if (usuarioUpvoted.value) {
-                upvoteDAO.deletar(post.id!!) { sucesso ->
-                    if (sucesso) {
-                        post.upvotes--
-                        usuarioUpvoted.value = false
-                        postDAO.atualizar(post) {}
+                upvoteDAO.buscarPorPostId(post.id!!) { upvoteList ->
+                    val upvote = upvoteList.find { it.usuarioId == usuarioLogadoId }
+                    if (upvote != null) {
+                        upvoteDAO.deletar(upvote.id) { sucesso ->
+                            if (sucesso) {
+                                upvotes.value--
+                                usuarioUpvoted.value = false
+                            }
+                        }
                     }
                 }
             } else {
                 val novoUpvote = Upvote(id = "", postId = post.id!!, usuarioId = usuarioLogadoId)
                 upvoteDAO.adicionar(novoUpvote) { upvote ->
                     if (upvote != null) {
-                        post.upvotes++
+                        upvotes.value++
                         usuarioUpvoted.value = true
-                        postDAO.atualizar(post) { sucesso ->
-                            if (usuarioDownvoted.value) {
-                                downvoteDAO.deletar(post.id!!) { sucessoDownvote ->
-                                    if (sucessoDownvote) {
-                                        post.downvotes--
-                                        usuarioDownvoted.value = false
-                                        postDAO.atualizar(post) {}
+
+                        if (usuarioDownvoted.value) {
+                            downvoteDAO.buscarPorPostId(post.id!!) { downvoteList ->
+                                val downvote = downvoteList.find { it.usuarioId == usuarioLogadoId }
+                                if (downvote != null) {
+                                    downvoteDAO.deletar(downvote.id) { sucesso ->
+                                        if (sucesso) {
+                                            downvotes.value--
+                                            usuarioDownvoted.value = false
+                                        }
                                     }
                                 }
                             }
@@ -85,30 +92,36 @@ fun CardPost(post: Post, upvoteDAO: UpvoteDAO, downvoteDAO: DownvoteDAO, postDAO
         }
     }
 
-
     fun realizarDownvote() {
         if (usuarioLogadoId != null) {
             if (usuarioDownvoted.value) {
-                downvoteDAO.deletar(post.id!!) { sucesso ->
-                    if (sucesso) {
-                        post.downvotes--
-                        usuarioDownvoted.value = false
-                        postDAO.atualizar(post) {}
+                downvoteDAO.buscarPorPostId(post.id!!) { downvoteList ->
+                    val downvote = downvoteList.find { it.usuarioId == usuarioLogadoId }
+                    if (downvote != null) {
+                        downvoteDAO.deletar(downvote.id) { sucesso ->
+                            if (sucesso) {
+                                downvotes.value--
+                                usuarioDownvoted.value = false
+                            }
+                        }
                     }
                 }
             } else {
                 val novoDownvote = Downvote(id = "", postId = post.id!!, usuarioId = usuarioLogadoId)
                 downvoteDAO.adicionar(novoDownvote) { downvote ->
                     if (downvote != null) {
-                        post.downvotes++
+                        downvotes.value++
                         usuarioDownvoted.value = true
-                        postDAO.atualizar(post) { sucesso ->
-                            if (usuarioUpvoted.value) {
-                                upvoteDAO.deletar(post.id!!) { sucessoUpvote ->
-                                    if (sucessoUpvote) {
-                                        post.upvotes--
-                                        usuarioUpvoted.value = false
-                                        postDAO.atualizar(post) {}
+
+                        if (usuarioUpvoted.value) {
+                            upvoteDAO.buscarPorPostId(post.id!!) { upvoteList ->
+                                val upvote = upvoteList.find { it.usuarioId == usuarioLogadoId }
+                                if (upvote != null) {
+                                    upvoteDAO.deletar(upvote.id) { sucesso ->
+                                        if (sucesso) {
+                                            upvotes.value--
+                                            usuarioUpvoted.value = false
+                                        }
                                     }
                                 }
                             }
