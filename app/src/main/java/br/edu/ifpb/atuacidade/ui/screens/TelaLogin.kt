@@ -3,7 +3,6 @@ package br.edu.ifpb.atuacidade.ui.screens
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,6 +14,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import br.edu.ifpb.atuacidade.model.Usuario
 import br.edu.ifpb.atuacidade.model.service.UsuarioDAO
 
 @Composable
@@ -35,7 +35,11 @@ fun TelaLogin(navController: NavController, modifier: Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(text = "Entre na sua conta", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(bottom = 25.dp))
+            Text(
+                text = "Entre na sua conta",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(bottom = 25.dp)
+            )
 
             OutlinedTextField(
                 value = username,
@@ -52,7 +56,10 @@ fun TelaLogin(navController: NavController, modifier: Modifier) {
                 value = senha,
                 onValueChange = { senha = it },
                 label = { Text("Senha") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -67,15 +74,21 @@ fun TelaLogin(navController: NavController, modifier: Modifier) {
                     if (username.isNotBlank() && senha.isNotBlank()) {
                         usuarioDAO.buscarPorUsername(username) { usuario ->
                             if (usuario != null && usuario.senha == senha) {
-                                navController.navigate("principal")
                                 SessaoUsuario.usuarioLogado = usuario
-                                Toast.makeText(context, "Login bem-sucedido!", Toast.LENGTH_SHORT).show()
+                                navController.navigate("principal")
+                                Toast.makeText(context, "Login bem-sucedido!", Toast.LENGTH_SHORT)
+                                    .show()
                             } else {
-                                Toast.makeText(context, "Usuário ou senha incorretos", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Usuário ou senha incorretos",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                     } else {
-                        Toast.makeText(context, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Preencha todos os campos", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -89,4 +102,8 @@ fun TelaLogin(navController: NavController, modifier: Modifier) {
             ) { Text("Não tem uma conta? Cadastre-se agora.") }
         }
     }
+}
+
+object SessaoUsuario {
+    var usuarioLogado: Usuario? = null
 }

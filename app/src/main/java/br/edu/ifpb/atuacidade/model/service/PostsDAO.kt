@@ -67,7 +67,7 @@ class PostsDAO {
             return
         }
 
-        db.collection("posts").document(post.id).set(post)
+        db.collection("posts").document(post.id!!).set(post)
             .addOnSuccessListener {
                 callback(true)
             }
