@@ -11,22 +11,12 @@ import br.edu.ifpb.atuacidade.model.service.PostsDAO
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.Timestamp
-import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.io.ByteArrayOutputStream
-import java.io.InputStream
 
 class PostagemViewModel(application: Application) : AndroidViewModel(application) {
-    private val supabase = createSupabaseClient(
-        supabaseUrl = "https://eztjhmhmklmhtsoshitc.supabase.co",
-        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6dGpobWhta2xtaHRzb3NoaXRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA3MTcyNjcsImV4cCI6MjA1NjI5MzI2N30.bmSrTW9EqLNcOEyhFmoJugAnWZQnvQ_tUM7CYxsTMJM"
-    ){
-        install(Postgrest)
-    }
 
     private val usuarioAuth = SessaoUsuario.usuarioLogado
     private val postsDAO = PostsDAO()
@@ -41,9 +31,10 @@ class PostagemViewModel(application: Application) : AndroidViewModel(application
         _uiState.value = _uiState.value.copy(descricao = descricao)
     }
 
-    fun atualizarMidiaUri(uri: Uri?) {
-        _uiState.value = _uiState.value.copy(midiaUri = uri)
+    fun atualizarURL(url: String) {
+        _uiState.value = _uiState.value.copy(url = url)
     }
+
 
     fun atualizarCategoria(categoria: String) {
         _uiState.value = _uiState.value.copy(categoriaSelecionada = categoria)
@@ -124,7 +115,7 @@ class PostagemViewModel(application: Application) : AndroidViewModel(application
             id = null,
             autorId = usuarioAuth!!.id,
             dataHora = Timestamp.now(),
-            midia = estado.midiaUri?.toString(),
+            midia = estado.url,
             descricao = estado.descricao,
             status = "Pendente",
             categoria = estado.categoriaSelecionada,
@@ -138,7 +129,7 @@ class PostagemViewModel(application: Application) : AndroidViewModel(application
 
 data class PostagemUiState(
     val descricao: String = "",
-    val midiaUri: Uri? = null,
+    val url: String = "",
     val categoriaSelecionada: String = "",
     val latitude: Double? = null,
     val longitude: Double? = null,

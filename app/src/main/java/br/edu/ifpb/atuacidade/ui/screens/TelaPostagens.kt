@@ -32,12 +32,6 @@ fun TelaPostagens(
     val context = LocalContext.current
     val estado by viewModel.uiState.collectAsState()
 
-    val imagePicker = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia()
-    ) { uri ->
-        viewModel.atualizarMidiaUri(uri)
-    }
-
     val locationPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         Manifest.permission.ACCESS_FINE_LOCATION
     } else {
@@ -58,7 +52,7 @@ fun TelaPostagens(
         item {
             CampoDescricao(viewModel)
             Spacer(modifier = Modifier.height(16.dp))
-            SeletorImagem(imagePicker, estado.midiaUri)
+            CampoURL(viewModel)
             Spacer(modifier = Modifier.height(16.dp))
             SeletorCategoria(viewModel)
             Spacer(modifier = Modifier.height(16.dp))
@@ -96,6 +90,18 @@ private fun CampoDescricao(viewModel: PostagemViewModel) {
         label = { Text("Descrição") },
         modifier = Modifier.fillMaxWidth(),
         maxLines = 5
+    )
+}
+
+@Composable
+private fun CampoURL(viewModel: PostagemViewModel) {
+    val estado by viewModel.uiState.collectAsState()
+    OutlinedTextField(
+        value = estado.url,
+        onValueChange = viewModel::atualizarDescricao,
+        label = { Text("URL da Imagem") },
+        modifier = Modifier.fillMaxWidth(),
+        maxLines = 1
     )
 }
 
@@ -187,4 +193,4 @@ private fun BotaoEnviar(carregando: Boolean, onClick: () -> Unit) {
             Text("Publicar Postagem")
         }
     }
-},
+}

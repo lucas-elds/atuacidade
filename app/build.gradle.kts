@@ -67,7 +67,9 @@ dependencies {
     implementation ("androidx.navigation:navigation-compose:2.6.0")  // Versão mais recente
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation(platform("io.github.jan-tennert.supabase:bom:3.1.1"))
+    implementation("io.github.jan-tennert.supabase:storage-kt:3.1.1")
     implementation("io.github.jan-tennert.supabase:postgrest-kt")
+    implementation(libs.ktor.client.android)
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 }
