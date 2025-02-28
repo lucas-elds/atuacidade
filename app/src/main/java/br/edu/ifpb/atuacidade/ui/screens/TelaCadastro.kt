@@ -73,7 +73,7 @@ fun TelaCadastro(navController: NavController, modifier: Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(text = "Cadastre-se", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(bottom = 50.dp))
+            Text(text = "Cadastre-se", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(bottom = 40.dp))
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -359,7 +359,7 @@ fun TelaCadastro(navController: NavController, modifier: Modifier) {
 
             val url = "http://www.buscacep.correios.com.br/"
             Text(
-                text = "Descubra aqui seu CEP.",
+                text = "Descubra aqui o seu CEP.",
                 fontSize = 13.sp,
                 color = Color.Cyan,
                 modifier = Modifier
@@ -459,7 +459,7 @@ fun TelaCadastro(navController: NavController, modifier: Modifier) {
 
             TextButton(
                 onClick = { navController.navigate("login") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().offset(y = (-20).dp)
             ) { Text("Já tem uma conta? Entre agora.") }
 
         }
