@@ -22,7 +22,8 @@ import java.time.LocalDateTime
 
 @Composable
 fun TelaCriacaoPost(
-    onPostCreated: (Post) -> Unit // Callback para quando o post for criado
+    onPostCreated: (Post) -> Unit, // Callback para quando o post for criado
+    modifier: Modifier
 ) {
     // Estado para os campos do formulário
     var descricao by remember { mutableStateOf("") }

@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -36,7 +37,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AtuacidadeTheme {
-                AppNavegacao()
+                Scaffold { paddingValues ->
+                    AppNavegacao(modifier = Modifier.padding(paddingValues))
+                }
             }
         }
     }
@@ -44,7 +47,7 @@ class MainActivity : ComponentActivity() {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavegacao() {
+fun AppNavegacao(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
 
     NavHost(navController = navController,
@@ -56,21 +59,22 @@ fun AppNavegacao() {
             ExitTransition.None
         }
     ) {
-        composable("home") {TelaHome(navController) }
-        composable("inicial") { TelaInicial(navController) }
-        composable("cadastro") { TelaCadastro(navController) } // Passando o navController
-        composable("login") { TelaLogin(navController) } // Passando o navController
-        composable("perfil") { TelaPerfil(navController) } // Passando o navController
+        composable("home") {TelaHome(navController, modifier) }
+        composable("inicial") { TelaInicial(navController, modifier) }
+        composable("cadastro") { TelaCadastro(navController, modifier) } // Passando o navController
+        composable("login") { TelaLogin(navController, modifier) } // Passando o navController
+        composable("perfil") { TelaPerfil(navController, modifier) } // Passando o navController
         composable("criacaoPost") {
             TelaCriacaoPost(
                 onPostCreated = { post ->
                     println("Post criado: $post")
                     // Voltar para a tela anterior após criar o post
                     navController.popBackStack()
-                }
+                },
+                modifier
             )
         }
-        composable("principal") { TelaPrincipal(navController) } // Passando o navController
+        composable("principal") { TelaPrincipal(navController, modifier) } // Passando o navController
     }
 }
 

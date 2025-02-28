@@ -17,14 +17,14 @@ import androidx.navigation.NavController
 import br.edu.ifpb.atuacidade.model.service.UsuarioDAO
 
 @Composable
-fun TelaLogin(navController: NavController) {
+fun TelaLogin(navController: NavController, modifier: Modifier) {
     val context = LocalContext.current
     var username by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
     val usuarioDAO = UsuarioDAO()
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)

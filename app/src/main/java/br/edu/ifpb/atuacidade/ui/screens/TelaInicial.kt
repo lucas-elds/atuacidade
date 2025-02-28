@@ -15,9 +15,9 @@ import androidx.compose.animation.ExitTransition
 
 
 @Composable
-fun TelaInicial(navController: NavController) {
+fun TelaInicial(navController: NavController, modifier: Modifier) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -53,7 +53,7 @@ fun TelaInicial(navController: NavController) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavegacao() {
+fun AppNavegacao(modifier: Modifier) {
     val navController = rememberNavController()
 
     NavHost(navController = navController,
@@ -65,21 +65,22 @@ fun AppNavegacao() {
             ExitTransition.None
         }
     ) {
-        composable("home") { TelaHome(navController) }
-        composable("inicial") { TelaInicial(navController) }
-        composable("login") { TelaLogin(navController) }
-        composable("perfil") { TelaPerfil(navController) }
-        composable("cadastro") { TelaCadastro(navController) }
+        composable("home") { TelaHome(navController, modifier) }
+        composable("inicial") { TelaInicial(navController, modifier) }
+        composable("login") { TelaLogin(navController, modifier) }
+        composable("perfil") { TelaPerfil(navController, modifier) }
+        composable("cadastro") { TelaCadastro(navController, modifier) }
         composable("criacaoPost") {
             TelaCriacaoPost(
                 onPostCreated = { post ->
                     println("Post criado: $post")
                     // Voltar para a tela anterior após criar o post
                     navController.popBackStack()
-                }
+                },
+                modifier = modifier
             )
         }
-        composable("principal") { TelaPrincipal(navController) }  // Aqui, adicionando a tela principal
+        composable("principal") { TelaPrincipal(navController, modifier) }  // Aqui, adicionando a tela principal
     }
 }
 
