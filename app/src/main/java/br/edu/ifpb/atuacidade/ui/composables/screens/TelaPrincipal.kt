@@ -1,4 +1,4 @@
-package br.edu.ifpb.atuacidade.ui.screens
+package br.edu.ifpb.atuacidade.ui.composables.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +17,8 @@ import br.edu.ifpb.atuacidade.model.Post
 import br.edu.ifpb.atuacidade.model.service.DownvoteDAO
 import br.edu.ifpb.atuacidade.model.service.PostsDAO
 import br.edu.ifpb.atuacidade.model.service.UpvoteDAO
+import br.edu.ifpb.atuacidade.ui.composables.components.BarraFixaTopo
+import br.edu.ifpb.atuacidade.ui.composables.components.CardPost
 import br.edu.ifpb.atuacidade.ui.theme.AtuacidadeTheme
 
 @Composable

@@ -1,4 +1,4 @@
-package br.edu.ifpb.atuacidade.ui.screens
+package br.edu.ifpb.atuacidade.ui.composables.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*

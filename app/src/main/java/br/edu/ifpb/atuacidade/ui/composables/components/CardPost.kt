@@ -1,4 +1,4 @@
-package br.edu.ifpb.atuacidade.ui.screens
+package br.edu.ifpb.atuacidade.ui.composables.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -12,10 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import br.edu.ifpb.atuacidade.model.Downvote
 import br.edu.ifpb.atuacidade.model.Post
 import br.edu.ifpb.atuacidade.model.Upvote
@@ -23,8 +21,8 @@ import br.edu.ifpb.atuacidade.model.service.UsuarioDAO
 import br.edu.ifpb.atuacidade.model.service.UpvoteDAO
 import br.edu.ifpb.atuacidade.model.service.DownvoteDAO
 import br.edu.ifpb.atuacidade.model.service.PostsDAO
+import br.edu.ifpb.atuacidade.ui.composables.screens.SessaoUsuario
 import coil.compose.rememberAsyncImagePainter
-import java.time.LocalDateTime
 
 @Composable
 fun CardPost(post: Post, upvoteDAO: UpvoteDAO, downvoteDAO: DownvoteDAO, postDAO: PostsDAO) {

@@ -1,13 +1,12 @@
-package br.edu.ifpb.atuacidade.ui.screens
+package br.edu.ifpb.atuacidade.model.service
 
 import android.app.Application
 import android.content.Context
-import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import br.edu.ifpb.atuacidade.model.Localizacao
 import br.edu.ifpb.atuacidade.model.Post
-import br.edu.ifpb.atuacidade.model.service.PostsDAO
+import br.edu.ifpb.atuacidade.ui.composables.screens.SessaoUsuario
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.Timestamp

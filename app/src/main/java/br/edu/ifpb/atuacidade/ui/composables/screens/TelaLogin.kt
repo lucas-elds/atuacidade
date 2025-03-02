@@ -1,4 +1,4 @@
-package br.edu.ifpb.atuacidade.ui.screens
+package br.edu.ifpb.atuacidade.ui.composables.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*

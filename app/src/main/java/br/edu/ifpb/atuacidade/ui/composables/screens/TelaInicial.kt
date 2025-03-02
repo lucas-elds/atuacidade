@@ -1,4 +1,4 @@
-package br.edu.ifpb.atuacidade.ui.screens
+package br.edu.ifpb.atuacidade.ui.composables.screens
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -12,8 +12,7 @@ import androidx.navigation.compose.*
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.lifecycle.viewmodel.compose.viewModel
-import br.edu.ifpb.atuacidade.model.Usuario
-
+import br.edu.ifpb.atuacidade.model.service.PostagemViewModel
 
 
 @Composable

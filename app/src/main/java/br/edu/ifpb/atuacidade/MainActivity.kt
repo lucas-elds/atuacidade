@@ -8,7 +8,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -17,7 +16,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import br.edu.ifpb.atuacidade.ui.screens.*
+import br.edu.ifpb.atuacidade.model.service.PostagemViewModel
+import br.edu.ifpb.atuacidade.ui.composables.screens.TelaCadastro
+import br.edu.ifpb.atuacidade.ui.composables.screens.TelaHome
+import br.edu.ifpb.atuacidade.ui.composables.screens.TelaInicial
+import br.edu.ifpb.atuacidade.ui.composables.screens.TelaLogin
+import br.edu.ifpb.atuacidade.ui.composables.screens.TelaPerfil
+import br.edu.ifpb.atuacidade.ui.composables.screens.TelaPostagens
+import br.edu.ifpb.atuacidade.ui.composables.screens.TelaPrincipal
 import br.edu.ifpb.atuacidade.ui.theme.AtuacidadeTheme
 import com.google.firebase.FirebaseApp
 
