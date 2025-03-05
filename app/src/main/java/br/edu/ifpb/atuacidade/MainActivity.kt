@@ -16,10 +16,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import br.edu.ifpb.atuacidade.model.service.PostagemViewModel
+import br.edu.ifpb.atuacidade.service.PostagemViewModel
 import br.edu.ifpb.atuacidade.ui.composables.screens.TelaCadastro
 import br.edu.ifpb.atuacidade.ui.composables.screens.TelaHome
-import br.edu.ifpb.atuacidade.ui.composables.screens.TelaInicial
 import br.edu.ifpb.atuacidade.ui.composables.screens.TelaLogin
 import br.edu.ifpb.atuacidade.ui.composables.screens.TelaPerfil
 import br.edu.ifpb.atuacidade.ui.composables.screens.TelaPostagens
@@ -56,11 +55,10 @@ fun AppNavegacao(modifier: Modifier = Modifier) {
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None }
     ) {
-        composable("home") { TelaHome(navController, modifier) }
-        composable("inicial") { TelaInicial(navController, modifier) }
-        composable("cadastro") { TelaCadastro(navController, modifier) }
-        composable("login") { TelaLogin(navController, modifier) }
-        composable("perfil") { TelaPerfil(navController, modifier) }
+        composable("home") { TelaHome(navController) }
+        composable("cadastro") { TelaCadastro(navController) }
+        composable("login") { TelaLogin(navController) }
+        composable("perfil") { TelaPerfil(navController) }
         composable("postagens") {
             val viewModel: PostagemViewModel = viewModel()
             TelaPostagens(
@@ -70,10 +68,10 @@ fun AppNavegacao(modifier: Modifier = Modifier) {
                         popUpTo("postagens") { inclusive = true }
                     }
                 },
-                onVoltar = { navController.popBackStack() } // Adiciona ação de voltar
+                onVoltar = { navController.popBackStack() }
             )
         }
 
-        composable("principal") { TelaPrincipal(navController, modifier) }
+        composable("principal") { TelaPrincipal(navController) }
     }
 }
