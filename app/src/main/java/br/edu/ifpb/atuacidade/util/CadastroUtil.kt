@@ -4,10 +4,7 @@ import android.graphics.Bitmap
 import android.icu.text.SimpleDateFormat
 import android.util.Base64
 import androidx.compose.ui.text.input.TextFieldValue
-import br.edu.ifpb.atuacidade.model.Usuario
-import br.edu.ifpb.atuacidade.model.service.UsuarioDAO
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import br.edu.ifpb.atuacidade.service.UsuarioDAO
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.net.URL

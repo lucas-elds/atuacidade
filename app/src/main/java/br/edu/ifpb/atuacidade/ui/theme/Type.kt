@@ -8,7 +8,6 @@
     import androidx.compose.ui.unit.sp
     import br.edu.ifpb.atuacidade.R
 
-    // Set of Material typography styles to start with
     val Typography = Typography(
         bodyLarge = TextStyle(
             fontFamily = FontFamily.Default,

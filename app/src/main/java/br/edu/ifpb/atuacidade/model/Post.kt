@@ -11,12 +11,11 @@ data class Post(
     var midia: String? = null,
     var descricao: String = "",
     var status: String = "",
-    var upvotes: Int = 0,
-    var downvotes: Int = 0,
+    var apoios: Int = 0,
     var categoria: String = "",
     var localizacao: Localizacao = Localizacao()
 ) {
-    constructor() : this(null, "", Timestamp.now(), null, "", "", 0, 0, "", Localizacao())
+    constructor() : this(null, "", Timestamp.now(), null, "", "", 0, "", Localizacao())
 }
 
 data class Localizacao(

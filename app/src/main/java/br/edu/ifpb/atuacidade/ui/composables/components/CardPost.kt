@@ -1,145 +1,60 @@
 package br.edu.ifpb.atuacidade.ui.composables.components
 
+import android.widget.Toast
+import br.edu.ifpb.atuacidade.util.usuarioApoiou
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.edu.ifpb.atuacidade.model.Downvote
 import br.edu.ifpb.atuacidade.model.Post
-import br.edu.ifpb.atuacidade.model.Upvote
-import br.edu.ifpb.atuacidade.model.service.UsuarioDAO
-import br.edu.ifpb.atuacidade.model.service.UpvoteDAO
-import br.edu.ifpb.atuacidade.model.service.DownvoteDAO
-import br.edu.ifpb.atuacidade.model.service.PostsDAO
 import br.edu.ifpb.atuacidade.ui.composables.screens.SessaoUsuario
+import br.edu.ifpb.atuacidade.util.apoiar
+import br.edu.ifpb.atuacidade.util.retirarApoio
+import br.edu.ifpb.atuacidade.util.nomeAutor
+import br.edu.ifpb.atuacidade.util.qntApoios
 import coil.compose.rememberAsyncImagePainter
+import kotlinx.coroutines.launch
 
 @Composable
-fun CardPost(post: Post, upvoteDAO: UpvoteDAO, downvoteDAO: DownvoteDAO, postDAO: PostsDAO) {
-    var autorNome by remember { mutableStateOf("Carregando...") }
-    val upvotes = remember { mutableStateOf(0) }
-    val downvotes = remember { mutableStateOf(0) }
-    val usuarioUpvoted = remember { mutableStateOf(false) }
-    val usuarioDownvoted = remember { mutableStateOf(false) }
-    val botaoHabilitado = remember { mutableStateOf(true) }
+fun CardPost(post: Post) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
-    val usuarioDAO = UsuarioDAO()
+    var apoios = remember { mutableIntStateOf(0) }
+    var nomeAutor = remember { mutableStateOf("") }
+    var postApoiado = remember { mutableStateOf(false) }
+
     val usuarioLogadoId = SessaoUsuario.usuarioLogado?.id
 
-    LaunchedEffect(post.id) {
-        usuarioDAO.buscarPorId(post.autorId) { usuario ->
-            autorNome = usuario?.nome ?: "Desconhecido"
-        }
-        upvoteDAO.buscarPorPostId(post.id!!) { upvoteList ->
-            upvotes.value = upvoteList.size
-            usuarioUpvoted.value = upvoteList.any { it.usuarioId == usuarioLogadoId }
-        }
-        downvoteDAO.buscarPorPostId(post.id!!) { downvoteList ->
-            downvotes.value = downvoteList.size
-            usuarioDownvoted.value = downvoteList.any { it.usuarioId == usuarioLogadoId }
-        }
+    LaunchedEffect(Unit) {
+        nomeAutor(post.autorId) { resultado -> nomeAutor.value = resultado }
+        usuarioApoiou(post.id!!, usuarioLogadoId!!) { resultado -> postApoiado.value = resultado }
+        qntApoios(post.id!!){ resultado -> apoios.intValue = resultado.size }
     }
-
-    fun realizarUpvote() {
-        if (usuarioLogadoId != null) {
-            if (usuarioUpvoted.value) {
-                upvoteDAO.buscarPorPostId(post.id!!) { upvoteList ->
-                    val upvote = upvoteList.find { it.usuarioId == usuarioLogadoId }
-                    if (upvote != null) {
-                        upvoteDAO.deletar(upvote.id) { sucesso ->
-                            if (sucesso) {
-                                upvotes.value--
-                                usuarioUpvoted.value = false
-                            }
-                        }
-                    }
-                }
-            } else {
-                val novoUpvote = Upvote(id = "", postId = post.id!!, usuarioId = usuarioLogadoId)
-                upvoteDAO.adicionar(novoUpvote) { upvote ->
-                    if (upvote != null) {
-                        upvotes.value++
-                        usuarioUpvoted.value = true
-
-                        if (usuarioDownvoted.value) {
-                            downvoteDAO.buscarPorPostId(post.id!!) { downvoteList ->
-                                val downvote = downvoteList.find { it.usuarioId == usuarioLogadoId }
-                                if (downvote != null) {
-                                    downvoteDAO.deletar(downvote.id) { sucesso ->
-                                        if (sucesso) {
-                                            downvotes.value--
-                                            usuarioDownvoted.value = false
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    fun realizarDownvote() {
-        if (usuarioLogadoId != null) {
-            if (usuarioDownvoted.value) {
-                downvoteDAO.buscarPorPostId(post.id!!) { downvoteList ->
-                    val downvote = downvoteList.find { it.usuarioId == usuarioLogadoId }
-                    if (downvote != null) {
-                        downvoteDAO.deletar(downvote.id) { sucesso ->
-                            if (sucesso) {
-                                downvotes.value--
-                                usuarioDownvoted.value = false
-                            }
-                        }
-                    }
-                }
-            } else {
-                val novoDownvote = Downvote(id = "", postId = post.id!!, usuarioId = usuarioLogadoId)
-                downvoteDAO.adicionar(novoDownvote) { downvote ->
-                    if (downvote != null) {
-                        downvotes.value++
-                        usuarioDownvoted.value = true
-
-                        if (usuarioUpvoted.value) {
-                            upvoteDAO.buscarPorPostId(post.id!!) { upvoteList ->
-                                val upvote = upvoteList.find { it.usuarioId == usuarioLogadoId }
-                                if (upvote != null) {
-                                    upvoteDAO.deletar(upvote.id) { sucesso ->
-                                        if (sucesso) {
-                                            upvotes.value--
-                                            usuarioUpvoted.value = false
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp),
-        shape = RoundedCornerShape(10.dp),
+            .padding(20.dp)
+            .border(1.dp, Color.Gray, shape = RoundedCornerShape(20.dp)),
+        shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -157,62 +72,102 @@ fun CardPost(post: Post, upvoteDAO: UpvoteDAO, downvoteDAO: DownvoteDAO, postDAO
                 color = MaterialTheme.colorScheme.primary
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            post.midia?.let {
-                Image(
-                    painter = rememberAsyncImagePainter(it),
-                    contentDescription = "Imagem do post",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp)
-                )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .border(2.dp, Color.DarkGray)
+                    .background(Color.DarkGray)
+            ){
+                post.midia?.let {
+                    Image(
+                        painter = rememberAsyncImagePainter(it),
+                        contentDescription = "Imagem do post",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Autor: $autorNome",
+                text = "Autor: ${nomeAutor.value}",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 15.dp),
+                thickness = 1.dp,
+                color = Color.Gray
+            )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Button(
-                    onClick = { realizarUpvote() },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3ea52e)),
-                    modifier = Modifier.weight(0.5f),
-                    enabled = botaoHabilitado.value
+            Column(
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ){
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.KeyboardArrowUp,
-                        contentDescription = "Upvote",
-                        tint = Color.White
+                    Text(
+                        text = "Total de apoios até o momento: ${apoios.intValue}",
+                        color = Color.White
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = "${upvotes.value}", color = Color.White)
                 }
 
-                Spacer(modifier = Modifier.width(16.dp))
-
                 Button(
-                    onClick = { realizarDownvote() },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFff3131)),
-                    modifier = Modifier.weight(0.5f),
-                    enabled = botaoHabilitado.value
+                    onClick = {
+                        if(postApoiado.value){
+                            retirarApoio(post, usuarioLogadoId!!) {
+                                coroutineScope.launch{
+                                    usuarioApoiou(post.id!!, usuarioLogadoId!!) { resultado -> postApoiado.value = resultado }
+                                    qntApoios(post.id!!){ resultado -> apoios.intValue = resultado.size }
+                                }
+
+                                Toast.makeText(
+                                    context,
+                                    "Você deixou de apoiar",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } else {
+                            apoiar(post, usuarioLogadoId!!){
+                                coroutineScope.launch{
+                                    usuarioApoiou(post.id!!, usuarioLogadoId!!) { resultado -> postApoiado.value = resultado }
+                                    qntApoios(post.id!!){ resultado -> apoios.intValue = resultado.size }
+                                }
+
+                                Toast.makeText(
+                                    context,
+                                    "Você apoiou!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (postApoiado.value) Color(0xFFAD1212) else Color(0xFF3ea52e)
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.KeyboardArrowDown,
-                        contentDescription = "Downvote",
+                        imageVector = if (postApoiado.value) Icons.Filled.Close else Icons.Filled.Check,
+                        contentDescription = "Apoio",
                         tint = Color.White
                     )
+
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = "${downvotes.value}", color = Color.White)
+
+                    Text(
+                        text = if (postApoiado.value) "Retirar apoio" else "Apoiar",
+                        color = Color.White
+                    )
                 }
             }
         }
