@@ -1,11 +1,10 @@
-package br.edu.ifpb.atuacidade.model.service
+package br.edu.ifpb.atuacidade.service
 
 import br.edu.ifpb.atuacidade.model.Usuario
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 
-//classe que pega dados do Firestore
 class UsuarioDAO {
 
     val db = FirebaseFirestore.getInstance()
@@ -52,12 +51,12 @@ class UsuarioDAO {
     }
 
     fun adicionar(usuario: Usuario, callback: (Boolean, String?) -> Unit) {
-        // Verifica se o CPF já está cadastrado
+        // verifica se o CPF ja ta cadastrado
         buscarPorCpf(usuario.cpf) { usuarioComCpf ->
             if (usuarioComCpf != null) {
                 callback(false, "CPF já cadastrado")
             } else {
-                // Verifica se o username já está cadastrado
+                // verifica se o username ja ta cadastrado
                 buscarPorUsername(usuario.username) { usuarioComUsername ->
                     if (usuarioComUsername != null) {
                         callback(false, "Nome de usuário já cadastrado")

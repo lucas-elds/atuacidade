@@ -1,4 +1,4 @@
-package br.edu.ifpb.atuacidade.model.service
+package br.edu.ifpb.atuacidade.service
 
 import android.app.Application
 import android.content.Context

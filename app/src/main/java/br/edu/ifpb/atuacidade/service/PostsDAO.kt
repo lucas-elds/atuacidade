@@ -1,4 +1,4 @@
-package br.edu.ifpb.atuacidade.model.service
+package br.edu.ifpb.atuacidade.service
 
 import android.util.Log
 import br.edu.ifpb.atuacidade.model.Post
@@ -6,15 +6,15 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 
-// Classe que pega dados do Firestore
 class PostsDAO {
 
     private val db = FirebaseFirestore.getInstance()
+    private val posts = db.collection("posts")
 
     fun buscar(callback: (List<Post>) -> Unit) {
-        db.collection("posts").get()
+        posts.get()
             .addOnSuccessListener { document ->
-                val posts = document.toObjects<Post>()
+                val posts = document.toObjects<Post>().sortedByDescending { it.apoios }
                 callback(posts)
             }
             .addOnFailureListener {
@@ -23,7 +23,7 @@ class PostsDAO {
     }
 
     fun buscarPorId(idPost: String, callback: (Post?) -> Unit) {
-        db.collection("posts").document(idPost).get()
+        posts.document(idPost).get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     val post = document.toObject<Post>()
@@ -38,7 +38,7 @@ class PostsDAO {
     }
 
     fun buscarPorAutorId(autorId: String, callback: (List<Post>) -> Unit) {
-        db.collection("posts").whereEqualTo("autorId", autorId).get()
+        posts.whereEqualTo("autorId", autorId).get()
             .addOnSuccessListener { document ->
                 val posts = document.toObjects<Post>()
                 callback(posts)
@@ -49,7 +49,7 @@ class PostsDAO {
     }
 
     fun adicionar(post: Post, callback: (Post?) -> Unit) {
-        db.collection("posts").add(post)
+        posts.add(post)
             .addOnSuccessListener { documentReference ->
                 Log.d("PostsDAO", "Postagem salva com ID: ${documentReference.id}")
                 val novoPost = post.copy(id = documentReference.id)
@@ -67,7 +67,7 @@ class PostsDAO {
             return
         }
 
-        db.collection("posts").document(post.id!!).set(post)
+        posts.document(post.id!!).set(post)
             .addOnSuccessListener {
                 callback(true)
             }
@@ -77,7 +77,7 @@ class PostsDAO {
     }
 
     fun deletar(idPost: String, callback: (Boolean) -> Unit) {
-        db.collection("posts").document(idPost).delete()
+        posts.document(idPost).delete()
             .addOnSuccessListener {
                 callback(true)
             }
