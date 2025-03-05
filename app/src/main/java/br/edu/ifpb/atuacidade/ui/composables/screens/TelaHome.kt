@@ -15,8 +15,8 @@ import androidx.navigation.NavController
 import br.edu.ifpb.atuacidade.R
 
 @Composable
-fun TelaHome(navController: NavController, modifier: Modifier) {
-    Box(modifier = modifier.fillMaxSize()) {
+fun TelaHome(navController: NavController) {
+    Box(modifier = Modifier.fillMaxSize()) {
 
         Image(
             painter = painterResource(id = R.drawable.atuacidade_banner),

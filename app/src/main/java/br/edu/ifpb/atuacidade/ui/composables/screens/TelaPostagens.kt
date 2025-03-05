@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import br.edu.ifpb.atuacidade.model.service.PostagemViewModel
+import br.edu.ifpb.atuacidade.service.PostagemViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -27,8 +27,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 fun TelaPostagens(
     viewModel: PostagemViewModel = viewModel(),
     onVoltar: () -> Unit,
-    onSucesso: () -> Unit,
-    modifier: Modifier = Modifier
+    onSucesso: () -> Unit
 ) {
     val context = LocalContext.current
     val estado by viewModel.uiState.collectAsState()
@@ -58,7 +57,7 @@ fun TelaPostagens(
         }
     ) { paddingValues ->
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp),
@@ -107,7 +106,7 @@ private fun CampoURL(viewModel: PostagemViewModel) {
         label = { Text("URL da Imagem") },
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp), //
+            .height(70.dp),
         maxLines = 1
     )
 }
@@ -166,11 +165,11 @@ private fun BotaoLocalizacao(
             }
         },
         modifier = Modifier.fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3ea52e))
     ) {
         Icon(imageVector = Icons.Default.LocationOn, contentDescription = "Localização")
         Spacer(modifier = Modifier.width(8.dp))
-        Text("Obter Localização Atual")
+        Text("Obter localização atual")
     }
 }
 

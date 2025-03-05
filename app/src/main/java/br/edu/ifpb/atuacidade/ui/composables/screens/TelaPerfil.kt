@@ -16,7 +16,7 @@ import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TelaPerfil(navController: NavController, modifier: Modifier = Modifier) {
+fun TelaPerfil(navController: NavController) {
     val usuarioLogado = SessaoUsuario.usuarioLogado
 
     Scaffold(
@@ -32,7 +32,7 @@ fun TelaPerfil(navController: NavController, modifier: Modifier = Modifier) {
         }
     ) { paddingValues ->
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp),

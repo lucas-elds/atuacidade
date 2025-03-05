@@ -16,7 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.navigation.NavController
 import br.edu.ifpb.atuacidade.model.Usuario
 import br.edu.ifpb.atuacidade.model.Endereco
-import br.edu.ifpb.atuacidade.model.service.UsuarioDAO
+import br.edu.ifpb.atuacidade.service.UsuarioDAO
 import br.edu.ifpb.atuacidade.util.buscarUsername
 import br.edu.ifpb.atuacidade.util.validarSenha
 import br.edu.ifpb.atuacidade.util.validarCPF
@@ -39,7 +39,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 
 @Composable
-fun TelaCadastro(navController: NavController, modifier: Modifier) {
+fun TelaCadastro(navController: NavController) {
     var nome by remember { mutableStateOf("") }
     var cpf by remember { mutableStateOf("") }
     var dataNascimento by remember { mutableStateOf(TextFieldValue("")) }
@@ -65,7 +65,7 @@ fun TelaCadastro(navController: NavController, modifier: Modifier) {
     val context = LocalContext.current
 
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -473,7 +473,7 @@ fun TelaCadastro(navController: NavController, modifier: Modifier) {
                         usuarioDAO.adicionar(usuario) { sucesso, mensagemErro ->
                             if (sucesso) {
                                 Toast.makeText(context, "Cadastro realizado com sucesso!", Toast.LENGTH_LONG).show()
-                                navController.navigate("login") // Redireciona para a tela de login após o cadastro
+                                navController.navigate("login")
                             } else {
                                 when (mensagemErro) {
                                     "CPF já cadastrado" -> {

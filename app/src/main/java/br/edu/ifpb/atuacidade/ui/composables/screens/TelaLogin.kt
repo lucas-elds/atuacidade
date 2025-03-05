@@ -15,10 +15,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import br.edu.ifpb.atuacidade.model.Usuario
-import br.edu.ifpb.atuacidade.model.service.UsuarioDAO
+import br.edu.ifpb.atuacidade.service.UsuarioDAO
 
 @Composable
-fun TelaLogin(navController: NavController, modifier: Modifier) {
+fun TelaLogin(navController: NavController) {
     val context = LocalContext.current
     var username by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
@@ -26,7 +26,7 @@ fun TelaLogin(navController: NavController, modifier: Modifier) {
     val usuarioDAO = UsuarioDAO()
 
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -94,11 +94,11 @@ fun TelaLogin(navController: NavController, modifier: Modifier) {
                             .show()
                     }
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().height(40.dp),
                 enabled = !carregando
             ) {
                 if (carregando) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(modifier = Modifier.size(20.dp))
                 } else {
                     Text(text = "Entrar")
                 }
