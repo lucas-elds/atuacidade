@@ -1,4 +1,3 @@
-package br.edu.ifpb.atuacidade.service
 
 import android.app.Application
 import android.content.Context
@@ -6,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import br.edu.ifpb.atuacidade.model.Localizacao
 import br.edu.ifpb.atuacidade.model.Post
+import br.edu.ifpb.atuacidade.service.PostsDAO
 import br.edu.ifpb.atuacidade.ui.composables.screens.SessaoUsuario
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class PostagemViewModel(application: Application) : AndroidViewModel(application) {
+class PostagemUtil(application: Application) : AndroidViewModel(application) {
 
     private val usuarioAuth = SessaoUsuario.usuarioLogado
     private val postsDAO = PostsDAO()

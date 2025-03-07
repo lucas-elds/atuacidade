@@ -1,5 +1,6 @@
 package br.edu.ifpb.atuacidade
 
+import PostagemUtil
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -16,7 +17,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import br.edu.ifpb.atuacidade.service.PostagemViewModel
 import br.edu.ifpb.atuacidade.ui.composables.screens.TelaCadastro
 import br.edu.ifpb.atuacidade.ui.composables.screens.TelaHome
 import br.edu.ifpb.atuacidade.ui.composables.screens.TelaLogin
@@ -60,7 +60,7 @@ fun AppNavegacao(modifier: Modifier = Modifier) {
         composable("login") { TelaLogin(navController) }
         composable("perfil") { TelaPerfil(navController) }
         composable("postagens") {
-            val viewModel: PostagemViewModel = viewModel()
+            val viewModel: PostagemUtil = viewModel()
             TelaPostagens(
                 viewModel = viewModel,
                 onSucesso = {

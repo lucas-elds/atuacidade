@@ -1,6 +1,7 @@
 @file:OptIn(ExperimentalPermissionsApi::class)
 package br.edu.ifpb.atuacidade.ui.composables.screens
 
+import PostagemUtil
 import android.Manifest
 import android.os.Build
 import androidx.compose.foundation.layout.*
@@ -16,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import br.edu.ifpb.atuacidade.service.PostagemViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -25,7 +25,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TelaPostagens(
-    viewModel: PostagemViewModel = viewModel(),
+    viewModel: PostagemUtil = viewModel(),
     onVoltar: () -> Unit,
     onSucesso: () -> Unit
 ) {
@@ -84,7 +84,7 @@ fun TelaPostagens(
 
 
 @Composable
-private fun CampoDescricao(viewModel: PostagemViewModel) {
+private fun CampoDescricao(viewModel: PostagemUtil) {
     val estado by viewModel.uiState.collectAsState()
     OutlinedTextField(
         value = estado.descricao,
@@ -98,7 +98,7 @@ private fun CampoDescricao(viewModel: PostagemViewModel) {
 }
 
 @Composable
-private fun CampoURL(viewModel: PostagemViewModel) {
+private fun CampoURL(viewModel: PostagemUtil) {
     val estado by viewModel.uiState.collectAsState()
     OutlinedTextField(
         value = estado.url,
@@ -112,7 +112,7 @@ private fun CampoURL(viewModel: PostagemViewModel) {
 }
 
 @Composable
-private fun SeletorCategoria(viewModel: PostagemViewModel) {
+private fun SeletorCategoria(viewModel: PostagemUtil) {
     val estado by viewModel.uiState.collectAsState()
     val categorias = listOf(
         "Vazamento", "Buraco na Rua", "Iluminação",
