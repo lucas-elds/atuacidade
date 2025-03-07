@@ -152,8 +152,7 @@ fun TelaPerfil(navController: NavController) {
 private fun deletarUsuarioEPosts(usuarioId: String, context: android.content.Context, onComplete: () -> Unit) {
     val usuarioDAO = UsuarioDAO()
     val postsDAO = PostsDAO()
-
-    // Deletar todas as postagens do usuário
+    
     postsDAO.buscarPorAutorId(usuarioId) { posts ->
         posts.forEach { post ->
             postsDAO.deletar(post.id ?: "") { success ->
@@ -163,7 +162,6 @@ private fun deletarUsuarioEPosts(usuarioId: String, context: android.content.Con
             }
         }
 
-        // Deletar o usuário após deletar as postagens
         usuarioDAO.deletarUsuario(usuarioId) { success ->
             if (success) {
                 Toast.makeText(context, "Conta e postagens deletadas com sucesso!", Toast.LENGTH_SHORT).show()
