@@ -105,4 +105,14 @@ class UsuarioDAO {
             }
     }
 
+    fun deletarUsuario(usuarioId: String, callback: (Boolean) -> Unit) {
+        db.collection("usuarios").document(usuarioId).delete()
+            .addOnSuccessListener {
+                callback(true)
+            }
+            .addOnFailureListener {
+                callback(false)
+            }
+    }
+
 }

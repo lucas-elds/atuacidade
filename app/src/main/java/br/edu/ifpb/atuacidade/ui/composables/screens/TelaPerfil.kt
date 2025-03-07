@@ -1,5 +1,6 @@
 package br.edu.ifpb.atuacidade.ui.composables.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
@@ -11,13 +12,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import br.edu.ifpb.atuacidade.service.PostsDAO
+import br.edu.ifpb.atuacidade.service.UsuarioDAO
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaPerfil(navController: NavController) {
     val usuarioLogado = SessaoUsuario.usuarioLogado
+    val showDialog = remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -63,19 +74,102 @@ fun TelaPerfil(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Button(
-                onClick = {
-                    SessaoUsuario.usuarioLogado = null
-                    navController.navigate("login") {
-                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF4BABBE),
-                    contentColor = Color.White
-                ),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Sair")
+                Button(
+                    onClick = { showDialog.value = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Red,
+                        contentColor = Color.White
+                    ),
+                ) {
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Apagar Conta")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Apagar Conta")
+                }
+
+                Button(
+                    onClick = {
+                        SessaoUsuario.usuarioLogado = null
+                        navController.navigate("login") {
+                            popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF4BABBE),
+                        contentColor = Color.White
+                    ),
+                ) {
+                    Icon(imageVector = Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Sair")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Sair")
+                }
+            }
+        }
+    }
+
+    if (showDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showDialog.value = false },
+            title = { Text("Apagar Conta") },
+            text = { Text("Tem certeza que deseja apagar sua conta? Esta ação não pode ser desfeita.") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDialog.value = false
+                        deletarUsuarioEPosts(usuarioLogado?.id ?: "", context) {
+                            SessaoUsuario.usuarioLogado = null
+                            navController.navigate("login") {
+                                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Red,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Sim")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { showDialog.value = false },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Gray,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Não")
+                }
+            }
+        )
+    }
+}
+
+private fun deletarUsuarioEPosts(usuarioId: String, context: android.content.Context, onComplete: () -> Unit) {
+    val usuarioDAO = UsuarioDAO()
+    val postsDAO = PostsDAO()
+
+    // Deletar todas as postagens do usuário
+    postsDAO.buscarPorAutorId(usuarioId) { posts ->
+        posts.forEach { post ->
+            postsDAO.deletar(post.id ?: "") { success ->
+                if (!success) {
+                    Toast.makeText(context, "Erro ao deletar postagem: ${post.id}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        // Deletar o usuário após deletar as postagens
+        usuarioDAO.deletarUsuario(usuarioId) { success ->
+            if (success) {
+                Toast.makeText(context, "Conta e postagens deletadas com sucesso!", Toast.LENGTH_SHORT).show()
+                onComplete()
+            } else {
+                Toast.makeText(context, "Erro ao deletar a conta", Toast.LENGTH_SHORT).show()
             }
         }
     }
