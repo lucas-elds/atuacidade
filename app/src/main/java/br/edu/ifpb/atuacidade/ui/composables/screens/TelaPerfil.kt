@@ -152,7 +152,7 @@ fun TelaPerfil(navController: NavController) {
 private fun deletarUsuarioEPosts(usuarioId: String, context: android.content.Context, onComplete: () -> Unit) {
     val usuarioDAO = UsuarioDAO()
     val postsDAO = PostsDAO()
-    
+
     postsDAO.buscarPorAutorId(usuarioId) { posts ->
         posts.forEach { post ->
             postsDAO.deletar(post.id ?: "") { success ->

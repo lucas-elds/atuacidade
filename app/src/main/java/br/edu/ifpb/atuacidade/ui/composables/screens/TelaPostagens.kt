@@ -3,17 +3,35 @@ package br.edu.ifpb.atuacidade.ui.composables.screens
 
 import PostagemUtil
 import android.Manifest
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.AbsoluteCutCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -50,7 +68,7 @@ fun TelaPostagens(
                 title = { Text("Criar Reclamação") },
                 navigationIcon = {
                     IconButton(onClick = onVoltar) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Voltar")
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
                     }
                 }
             )
@@ -67,8 +85,8 @@ fun TelaPostagens(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                item { BotaoSelecionarImagem(viewModel) }
                 item { CampoDescricao(viewModel) }
-                item { CampoURL(viewModel) }
                 item { SeletorCategoria(viewModel) }
                 item { BotaoLocalizacao(permissionState) { viewModel.obterLocalizacao(context) } }
                 item {
@@ -171,6 +189,72 @@ private fun BotaoLocalizacao(
         Spacer(modifier = Modifier.width(8.dp))
         Text("Obter localização atual")
     }
+}
+
+@Composable
+private fun BotaoSelecionarImagem(viewModel: PostagemUtil) {
+    val context = LocalContext.current
+    val estado by viewModel.uiState.collectAsState()
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            viewModel.atualizarImagemSelecionada(it)
+        }
+    }
+
+    Column {
+        estado.imagemSelecionada?.let { uri ->
+            Image(
+                bitmap = rememberImageBitmap(uri, context),
+                contentDescription = "Prévia da Imagem",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp))
+        }
+
+        Button(
+            onClick = { launcher.launch("image/*") },
+            modifier = Modifier
+                .padding(top = 20.dp)
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RectangleShape,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.DarkGray
+            )
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Image,
+                    contentDescription = "Selecionar Imagem",
+                    tint = Color.White
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Selecionar Imagem",
+                    color = Color.White
+                )
+            }
+        }
+
+
+    }
+}
+
+@Composable
+private fun rememberImageBitmap(uri: Uri, context: Context): ImageBitmap {
+    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
+    LaunchedEffect(uri) {
+        val inputStream = context.contentResolver.openInputStream(uri)
+        bitmap.value = BitmapFactory.decodeStream(inputStream)
+        inputStream?.close()
+    }
+    return bitmap.value?.asImageBitmap() ?: ImageBitmap(1, 1)
 }
 
 @Composable

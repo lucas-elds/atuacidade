@@ -34,13 +34,13 @@ fun CardPost(post: Post) {
     val coroutineScope = rememberCoroutineScope()
 
     var apoios = remember { mutableIntStateOf(0) }
-    var nomeAutor = remember { mutableStateOf("") }
+    var nickname = remember { mutableStateOf("") }
     var postApoiado = remember { mutableStateOf(false) }
 
     val usuarioLogadoId = SessaoUsuario.usuarioLogado?.id
 
     LaunchedEffect(Unit) {
-        nomeAutor(post.autorId) { resultado -> nomeAutor.value = resultado }
+        nomeAutor(post.autorId) { resultado -> nickname.value = resultado }
         usuarioApoiou(post.id!!, usuarioLogadoId!!) { resultado -> postApoiado.value = resultado }
         qntApoios(post.id!!){ resultado -> apoios.intValue = resultado.size }
     }
@@ -58,7 +58,7 @@ fun CardPost(post: Post) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = post.descricao,
+                text = "@${nickname.value}",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -95,9 +95,8 @@ fun CardPost(post: Post) {
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Autor: ${nomeAutor.value}",
+                text = post.descricao,
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
             )
 
             HorizontalDivider(
@@ -115,7 +114,7 @@ fun CardPost(post: Post) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Total de apoios até o momento: ${apoios.intValue}",
+                        text = "Total de apoios: ${apoios.intValue}",
                         color = Color.White
                     )
                 }

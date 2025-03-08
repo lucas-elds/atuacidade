@@ -61,7 +61,7 @@ fun usuarioApoiou(postId : String, usuarioId: String, callback: (Boolean) -> Uni
 fun nomeAutor(usuarioId: String, callback: (String) -> Unit){
     usuarioDAO.buscarPorId(usuarioId){ usuario ->
         if(usuario != null){
-            callback(usuario.nome)
+            callback(usuario.username)
         } else {
             callback("")
         }

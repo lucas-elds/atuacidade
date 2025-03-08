@@ -1,6 +1,7 @@
 
 import android.app.Application
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import br.edu.ifpb.atuacidade.model.Localizacao
@@ -9,7 +10,9 @@ import br.edu.ifpb.atuacidade.service.PostsDAO
 import br.edu.ifpb.atuacidade.ui.composables.screens.SessaoUsuario
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
+import com.google.firebase.storage.storage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -70,9 +73,20 @@ class PostagemUtil(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(carregando = true)
 
-            val novoPost = criarPost(estado)
+            val urlImagem = estado.imagemSelecionada?.let { uri ->
+                uploadImagemParaFirebase(uri)
+            } ?: estado.url
+
+            val novoPost = criarPost(estado.copy(url = urlImagem))
             salvarPostagem(novoPost)
         }
+    }
+
+    private suspend fun uploadImagemParaFirebase(uri: Uri): String {
+        val storageRef = Firebase.storage.reference
+        val imagemRef = storageRef.child("${usuarioAuth!!.cpf}/${uri.lastPathSegment}")
+        val uploadTask = imagemRef.putFile(uri).await()
+        return imagemRef.downloadUrl.await().toString()
     }
 
     private fun salvarPostagem(post: Post) {
@@ -89,6 +103,10 @@ class PostagemUtil(application: Application) : AndroidViewModel(application) {
                 )
             }
         }
+    }
+
+    fun atualizarImagemSelecionada(uri: Uri) {
+        _uiState.value = _uiState.value.copy(imagemSelecionada = uri)
     }
 
     private fun validarCampos(estado: PostagemUiState): Boolean {
@@ -129,6 +147,7 @@ class PostagemUtil(application: Application) : AndroidViewModel(application) {
 data class PostagemUiState(
     val descricao: String = "",
     val url: String = "",
+    val imagemSelecionada: Uri? = null,
     val categoriaSelecionada: String = "",
     val latitude: Double? = null,
     val longitude: Double? = null,
