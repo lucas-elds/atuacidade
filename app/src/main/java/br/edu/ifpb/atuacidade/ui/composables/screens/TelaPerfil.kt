@@ -3,31 +3,32 @@ package br.edu.ifpb.atuacidade.ui.composables.screens
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import br.edu.ifpb.atuacidade.service.PostsDAO
 import br.edu.ifpb.atuacidade.service.UsuarioDAO
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaPerfil(navController: NavController) {
     val usuarioLogado = SessaoUsuario.usuarioLogado
     val showDialog = remember { mutableStateOf(false) }
+    val menuExpanded = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Scaffold(
@@ -37,6 +38,30 @@ fun TelaPerfil(navController: NavController) {
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { menuExpanded.value = true }) {
+                        Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Mais opções")
+                    }
+                    DropdownMenu(
+                        expanded = menuExpanded.value,
+                        onDismissRequest = { menuExpanded.value = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Editar Dados") },
+                            onClick = {
+                                menuExpanded.value = false
+                                navController.navigate("editar_dados")
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Excluir Conta") },
+                            onClick = {
+                                menuExpanded.value = false
+                                showDialog.value = true
+                            }
+                        )
                     }
                 }
             )
@@ -60,52 +85,37 @@ fun TelaPerfil(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium
+            Text(
+                text = usuarioLogado?.nome ?: "Carregando...",
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center
+            )
+
+            Text(
+                text = "@${usuarioLogado?.username ?: "username"}",
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center,
+                color = Color.Gray
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = {
+                    SessaoUsuario.usuarioLogado = null
+                    navController.navigate("login") {
+                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF4BABBE),
+                    contentColor = Color.White
+                ),
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = "Nome: ${usuarioLogado?.nome}", style = MaterialTheme.typography.bodyLarge)
-                    Text(text = "CPF: ${usuarioLogado?.cpf}", style = MaterialTheme.typography.bodyLarge)
-                    Text(text = "Data de Nascimento: ${usuarioLogado?.dataNascimento}", style = MaterialTheme.typography.bodyLarge)
-                    Text(text = "Username: @${usuarioLogado?.username}", style = MaterialTheme.typography.bodyLarge)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Button(
-                    onClick = { showDialog.value = true },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red,
-                        contentColor = Color.White
-                    ),
-                ) {
-                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Apagar Conta")
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Apagar Conta")
-                }
-
-                Button(
-                    onClick = {
-                        SessaoUsuario.usuarioLogado = null
-                        navController.navigate("login") {
-                            popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF4BABBE),
-                        contentColor = Color.White
-                    ),
-                ) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Sair")
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Sair")
-                }
+                Icon(imageVector = Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Sair")
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Sair")
             }
         }
     }
@@ -126,10 +136,7 @@ fun TelaPerfil(navController: NavController) {
                             }
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red,
-                        contentColor = Color.White
-                    )
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                 ) {
                     Text("Sim")
                 }
@@ -137,10 +144,7 @@ fun TelaPerfil(navController: NavController) {
             dismissButton = {
                 Button(
                     onClick = { showDialog.value = false },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Gray,
-                        contentColor = Color.White
-                    )
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
                 ) {
                     Text("Não")
                 }
@@ -148,6 +152,7 @@ fun TelaPerfil(navController: NavController) {
         )
     }
 }
+
 
 private fun deletarUsuarioEPosts(usuarioId: String, context: android.content.Context, onComplete: () -> Unit) {
     val usuarioDAO = UsuarioDAO()

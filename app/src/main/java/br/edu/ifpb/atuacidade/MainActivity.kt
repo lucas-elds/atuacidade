@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import br.edu.ifpb.atuacidade.ui.composables.screens.TelaCadastro
+import br.edu.ifpb.atuacidade.ui.composables.screens.TelaEditarDados
 import br.edu.ifpb.atuacidade.ui.composables.screens.TelaHome
 import br.edu.ifpb.atuacidade.ui.composables.screens.TelaLogin
 import br.edu.ifpb.atuacidade.ui.composables.screens.TelaPerfil
@@ -59,6 +60,7 @@ fun AppNavegacao(modifier: Modifier = Modifier) {
         composable("cadastro") { TelaCadastro(navController) }
         composable("login") { TelaLogin(navController) }
         composable("perfil") { TelaPerfil(navController) }
+        composable("editar_dados") { TelaEditarDados(navController) }
         composable("postagens") {
             val viewModel: PostagemUtil = viewModel()
             TelaPostagens(

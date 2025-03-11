@@ -11,23 +11,45 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.AbsoluteCutCornerShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.RectangleShape
@@ -61,6 +83,11 @@ fun TelaPostagens(
     LaunchedEffect(estado.sucesso) {
         if (estado.sucesso) onSucesso()
     }
+
+    LaunchedEffect(Unit) {
+        viewModel.carregarCategorias()
+    }
+
 
     Scaffold(
         topBar = {
@@ -115,29 +142,10 @@ private fun CampoDescricao(viewModel: PostagemUtil) {
     )
 }
 
-@Composable
-private fun CampoURL(viewModel: PostagemUtil) {
-    val estado by viewModel.uiState.collectAsState()
-    OutlinedTextField(
-        value = estado.url,
-        onValueChange = viewModel::atualizarURL,
-        label = { Text("URL da Imagem") },
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(70.dp),
-        maxLines = 1
-    )
-}
 
 @Composable
 private fun SeletorCategoria(viewModel: PostagemUtil) {
     val estado by viewModel.uiState.collectAsState()
-    val categorias = listOf(
-        "Vazamento", "Buraco na Rua", "Iluminação",
-        "Terreno Baldio", "Transporte Público",
-        "Área de Risco", "Infraestrutura", "Saúde"
-    )
-
     var expandido by remember { mutableStateOf(false) }
 
     Column {
@@ -146,7 +154,8 @@ private fun SeletorCategoria(viewModel: PostagemUtil) {
         Box {
            OutlinedButton(
                 onClick = { expandido = true },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                shape = RectangleShape
             ) {
                 Text(estado.categoriaSelecionada.ifEmpty { "Selecione a categoria" })
             }
@@ -155,7 +164,7 @@ private fun SeletorCategoria(viewModel: PostagemUtil) {
                 expanded = expandido,
                 onDismissRequest = { expandido = false }
             ) {
-                categorias.forEach { categoria ->
+                estado.categorias.forEach { categoria ->
                     DropdownMenuItem(
                         text = { Text(categoria) },
                         onClick = {
@@ -174,22 +183,28 @@ private fun BotaoLocalizacao(
     permissionState: PermissionState,
     onClick: () -> Unit
 ) {
+    val estado by rememberUpdatedState(newValue = permissionState.status.isGranted)
+    val uiState by viewModel<PostagemUtil>().uiState.collectAsState()
+
     Button(
         onClick = {
-            if (permissionState.status.isGranted) {
+            if (estado) {
                 onClick()
             } else {
                 permissionState.launchPermissionRequest()
             }
         },
         modifier = Modifier.fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3ea52e))
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (uiState.localizacaoObtida) Color(0xFF4CAF50) else Color.Gray
+        )
     ) {
         Icon(imageVector = Icons.Default.LocationOn, contentDescription = "Localização")
         Spacer(modifier = Modifier.width(8.dp))
-        Text("Obter localização atual")
+        Text(if (uiState.localizacaoObtida) "Localização Obtida" else "Obter localização atual")
     }
 }
+
 
 @Composable
 private fun BotaoSelecionarImagem(viewModel: PostagemUtil) {

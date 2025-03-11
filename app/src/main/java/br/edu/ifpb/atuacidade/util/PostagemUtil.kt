@@ -38,6 +38,12 @@ class PostagemUtil(application: Application) : AndroidViewModel(application) {
     }
 
 
+    fun carregarCategorias() {
+        postsDAO.buscarCategorias { categorias ->
+            _uiState.value = _uiState.value.copy(categorias = categorias)
+        }
+    }
+
     fun atualizarCategoria(categoria: String) {
         _uiState.value = _uiState.value.copy(categoriaSelecionada = categoria)
     }
@@ -50,7 +56,8 @@ class PostagemUtil(application: Application) : AndroidViewModel(application) {
                     _uiState.value = _uiState.value.copy(
                         latitude = it.latitude,
                         longitude = it.longitude,
-                        erro = null
+                        erro = null,
+                        localizacaoObtida = true
                     )
                 } ?: run {
                     _uiState.value = _uiState.value.copy(
@@ -64,6 +71,7 @@ class PostagemUtil(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
 
     fun enviarPostagem() {
         val estado = _uiState.value
@@ -153,5 +161,7 @@ data class PostagemUiState(
     val longitude: Double? = null,
     val carregando: Boolean = false,
     val erro: String? = null,
-    val sucesso: Boolean = false
+    val sucesso: Boolean = false,
+    val localizacaoObtida: Boolean = false,
+    val categorias: List<String> = emptyList()
 )

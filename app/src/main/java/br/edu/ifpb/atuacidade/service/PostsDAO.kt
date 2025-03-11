@@ -85,4 +85,18 @@ class PostsDAO {
                 callback(false)
             }
     }
+
+    // Para as categorias:
+    fun buscarCategorias(callback: (List<String>) -> Unit) {
+        db.collection("categorias").get()
+            .addOnSuccessListener { documents ->
+                val categorias = documents.mapNotNull { it.getString("nome") }
+                callback(categorias)
+            }
+            .addOnFailureListener {
+                callback(emptyList())
+            }
+    }
+
+
 }

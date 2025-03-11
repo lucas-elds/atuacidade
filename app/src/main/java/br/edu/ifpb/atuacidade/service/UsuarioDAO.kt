@@ -115,4 +115,18 @@ class UsuarioDAO {
             }
     }
 
+    fun atualizarUsuario(usuario: Usuario, callback: (Boolean) -> Unit) {
+        if (usuario.id != null) {
+            db.collection("usuarios").document(usuario.id).set(usuario)
+                .addOnSuccessListener {
+                    callback(true)
+                }
+                .addOnFailureListener {
+                    callback(false)
+                }
+        } else {
+            callback(false)
+        }
+    }
+
 }
