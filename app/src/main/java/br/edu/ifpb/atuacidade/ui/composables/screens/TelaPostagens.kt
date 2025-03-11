@@ -218,17 +218,7 @@ private fun BotaoSelecionarImagem(viewModel: PostagemUtil) {
             viewModel.atualizarImagemSelecionada(it)
         }
     }
-
     Column {
-        estado.imagemSelecionada?.let { uri ->
-            Image(
-                bitmap = rememberImageBitmap(uri, context),
-                contentDescription = "Prévia da Imagem",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp))
-        }
-
         Button(
             onClick = { launcher.launch("image/*") },
             modifier = Modifier
@@ -259,17 +249,6 @@ private fun BotaoSelecionarImagem(viewModel: PostagemUtil) {
 
 
     }
-}
-
-@Composable
-private fun rememberImageBitmap(uri: Uri, context: Context): ImageBitmap {
-    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
-    LaunchedEffect(uri) {
-        val inputStream = context.contentResolver.openInputStream(uri)
-        bitmap.value = BitmapFactory.decodeStream(inputStream)
-        inputStream?.close()
-    }
-    return bitmap.value?.asImageBitmap() ?: ImageBitmap(1, 1)
 }
 
 @Composable
