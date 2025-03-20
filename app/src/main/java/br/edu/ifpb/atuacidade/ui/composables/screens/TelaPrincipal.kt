@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import br.edu.ifpb.atuacidade.model.Post
+import br.edu.ifpb.atuacidade.data.model.Post
 import br.edu.ifpb.atuacidade.service.PostsDAO
 import br.edu.ifpb.atuacidade.service.ApoioDAO
 import br.edu.ifpb.atuacidade.ui.composables.components.BarraFixaTopo

@@ -2,10 +2,11 @@
 import android.app.Application
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import br.edu.ifpb.atuacidade.model.Localizacao
-import br.edu.ifpb.atuacidade.model.Post
+import br.edu.ifpb.atuacidade.data.model.Localizacao
+import br.edu.ifpb.atuacidade.data.model.Post
 import br.edu.ifpb.atuacidade.service.PostsDAO
 import br.edu.ifpb.atuacidade.ui.composables.screens.SessaoUsuario
 import com.google.android.gms.location.FusedLocationProviderClient

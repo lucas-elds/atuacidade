@@ -3,8 +3,8 @@ package br.edu.ifpb.atuacidade.util
 import br.edu.ifpb.atuacidade.service.ApoioDAO
 import br.edu.ifpb.atuacidade.service.PostsDAO
 import br.edu.ifpb.atuacidade.ui.composables.screens.SessaoUsuario
-import br.edu.ifpb.atuacidade.model.Apoio
-import br.edu.ifpb.atuacidade.model.Post
+import br.edu.ifpb.atuacidade.data.model.Apoio
+import br.edu.ifpb.atuacidade.data.model.Post
 import br.edu.ifpb.atuacidade.service.UsuarioDAO
 
 val apoioDAO = ApoioDAO()

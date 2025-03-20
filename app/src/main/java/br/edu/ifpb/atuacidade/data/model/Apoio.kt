@@ -1,4 +1,4 @@
-package br.edu.ifpb.atuacidade.model
+package br.edu.ifpb.atuacidade.data.model
 
 import com.google.firebase.firestore.DocumentId
 

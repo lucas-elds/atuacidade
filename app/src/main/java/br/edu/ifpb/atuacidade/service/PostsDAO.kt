@@ -1,7 +1,7 @@
 package br.edu.ifpb.atuacidade.service
 
 import android.util.Log
-import br.edu.ifpb.atuacidade.model.Post
+import br.edu.ifpb.atuacidade.data.model.Post
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects

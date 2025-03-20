@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.edu.ifpb.atuacidade.model.Post
+import br.edu.ifpb.atuacidade.data.model.Post
 import br.edu.ifpb.atuacidade.ui.composables.screens.SessaoUsuario
 import br.edu.ifpb.atuacidade.util.apoiar
 import br.edu.ifpb.atuacidade.util.retirarApoio

@@ -1,6 +1,6 @@
 package br.edu.ifpb.atuacidade.service
 
-import br.edu.ifpb.atuacidade.model.Apoio
+import br.edu.ifpb.atuacidade.data.model.Apoio
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects

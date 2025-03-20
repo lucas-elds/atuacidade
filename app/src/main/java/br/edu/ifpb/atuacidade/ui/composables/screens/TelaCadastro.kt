@@ -14,8 +14,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.navigation.NavController
-import br.edu.ifpb.atuacidade.model.Usuario
-import br.edu.ifpb.atuacidade.model.Endereco
+import br.edu.ifpb.atuacidade.data.model.Usuario
+import br.edu.ifpb.atuacidade.data.model.Endereco
 import br.edu.ifpb.atuacidade.service.UsuarioDAO
 import br.edu.ifpb.atuacidade.util.buscarUsername
 import br.edu.ifpb.atuacidade.util.validarSenha

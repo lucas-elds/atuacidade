@@ -14,7 +14,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import br.edu.ifpb.atuacidade.model.Usuario
+import br.edu.ifpb.atuacidade.data.model.Usuario
 import br.edu.ifpb.atuacidade.service.UsuarioDAO
 
 @Composable
