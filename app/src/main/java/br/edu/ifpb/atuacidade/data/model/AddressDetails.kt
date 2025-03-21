@@ -1,17 +1,17 @@
 package br.edu.ifpb.atuacidade.data.model
 
 data class AddressDetails(
-    val road: String? = "Indisponível",
-    val house_number: String? = "Indisponível",
-    val suburb: String? = "Indisponível",
-    val city: String? = "Indisponível",
-    val municipality: String? = "Indisponível",
-    val county: String? = "Indisponível",
-    val state_district: String? = "Indisponível",
-    val state: String? = "Indisponível",
-    val postcode: String? = "Indisponível",
-    val country: String? = "Indisponível",
-    val country_code: String? = "Indisponível"
+    val road: String?,
+    val house_number: String?,
+    val suburb: String?,
+    val city: String?,
+    val municipality: String?,
+    val county: String?,
+    val state_district: String?,
+    val state: String?,
+    val postcode: String?,
+    val country: String?,
+    val country_code: String?
 )
 
 data class GeocodeResponse(
