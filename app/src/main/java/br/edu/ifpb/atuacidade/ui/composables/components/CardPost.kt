@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,6 +28,7 @@ import br.edu.ifpb.atuacidade.util.nomeAutor
 import br.edu.ifpb.atuacidade.util.qntApoios
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.launch
+import br.edu.ifpb.atuacidade.util.fetchAddress
 
 @Composable
 fun CardPost(post: Post) {
@@ -35,6 +37,7 @@ fun CardPost(post: Post) {
 
     var apoios = remember { mutableIntStateOf(0) }
     var nickname = remember { mutableStateOf("") }
+    var endereco = remember { mutableStateOf("Carregando...") }
     var postApoiado = remember { mutableStateOf(false) }
 
     val usuarioLogadoId = SessaoUsuario.usuarioLogado?.id
@@ -43,6 +46,11 @@ fun CardPost(post: Post) {
         nomeAutor(post.autorId) { resultado -> nickname.value = resultado }
         usuarioApoiou(post.id!!, usuarioLogadoId!!) { resultado -> postApoiado.value = resultado }
         qntApoios(post.id!!){ resultado -> apoios.intValue = resultado.size }
+        fetchAddress(post.localizacao.latitude, post.localizacao.longitude) { resultado ->
+            if (resultado != null) {
+                endereco.value = "Rua: ${resultado.road} | Bairro: ${resultado.suburb} | Cidade: ${resultado.city}"
+            }
+        }
     }
 
     Card(
@@ -98,6 +106,27 @@ fun CardPost(post: Post) {
                 text = post.descricao,
                 fontSize = 16.sp,
             )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
+                modifier = Modifier.padding(top = 10.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.LocationOn,
+                    contentDescription = "Ícone de Local",
+                    modifier = Modifier.size(25.dp)
+                )
+                Text(
+                    text = endereco.value,
+                    fontSize = 16.sp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentWidth(Alignment.Start)
+                )
+            }
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 15.dp),
