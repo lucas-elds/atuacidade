@@ -9,6 +9,7 @@ import br.edu.ifpb.atuacidade.data.model.Localizacao
 import br.edu.ifpb.atuacidade.data.model.Post
 import br.edu.ifpb.atuacidade.service.PostsDAO
 import br.edu.ifpb.atuacidade.ui.composables.screens.SessaoUsuario
+import br.edu.ifpb.atuacidade.util.fetchAddress
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.Firebase
@@ -54,14 +55,12 @@ class PostagemUtil(application: Application) : AndroidViewModel(application) {
             try {
                 val location = fusedLocationClient.lastLocation.await()
                 location?.let {
-<<<<<<< HEAD
                     _uiState.value = _uiState.value.copy(
                         latitude = it.latitude,
                         longitude = it.longitude,
                         erro = null,
                         localizacaoObtida = true
                     )
-=======
                     fetchAddress(it.latitude, it.longitude) { address ->
                         if (address != null) {
                             _uiState.value = _uiState.value.copy(
@@ -83,7 +82,6 @@ class PostagemUtil(application: Application) : AndroidViewModel(application) {
                         }
                     }
 
->>>>>>> parent of d7b272d (Revert "altera PostagemUtil e TelaPostagens")
                 } ?: run {
                     _uiState.value = _uiState.value.copy(
                         erro = "Não foi possível obter a localização"
