@@ -3,10 +3,14 @@ package br.edu.ifpb.atuacidade.ui.composables.screens
 
 import PostagemUtil
 import android.Manifest
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,11 +51,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import br.edu.ifpb.atuacidade.ui.theme.MidBlue
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -110,7 +115,7 @@ fun TelaPostagens(
                 item { BotaoSelecionarImagem(viewModel) }
                 item { CampoDescricao(viewModel) }
                 item { SeletorCategoria(viewModel) }
-                item { BotaoLocalizacao(estado.carregando, permissionState) { viewModel.obterLocalizacao(context) } }
+                item { BotaoLocalizacao(permissionState) { viewModel.obterLocalizacao(context) } }
                 item {
                     estado.erro?.let {
                         Text(text = it, color = MaterialTheme.colorScheme.error)
@@ -126,6 +131,85 @@ fun TelaPostagens(
         }
     }
 }
+
+
+@Composable
+private fun CampoDescricao(viewModel: PostagemUtil) {
+    val estado by viewModel.uiState.collectAsState()
+    OutlinedTextField(
+        value = estado.descricao,
+        onValueChange = viewModel::atualizarDescricao,
+        label = { Text("Descrição") },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp),
+        maxLines = 5
+    )
+}
+
+
+@Composable
+private fun SeletorCategoria(viewModel: PostagemUtil) {
+    val estado by viewModel.uiState.collectAsState()
+    var expandido by remember { mutableStateOf(false) }
+
+    Column {
+        Text(text = "Categoria", style = MaterialTheme.typography.bodyLarge)
+
+        Box {
+           OutlinedButton(
+                onClick = { expandido = true },
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                shape = RectangleShape
+            ) {
+                Text(estado.categoriaSelecionada.ifEmpty { "Selecione a categoria" })
+            }
+
+            DropdownMenu(
+                expanded = expandido,
+                onDismissRequest = { expandido = false }
+            ) {
+                estado.categorias.forEach { categoria ->
+                    DropdownMenuItem(
+                        text = { Text(categoria) },
+                        onClick = {
+                            viewModel.atualizarCategoria(categoria)
+                            expandido = false
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BotaoLocalizacao(
+    permissionState: PermissionState,
+    onClick: () -> Unit
+) {
+    val estado by rememberUpdatedState(newValue = permissionState.status.isGranted)
+    val uiState by viewModel<PostagemUtil>().uiState.collectAsState()
+
+    Button(
+        onClick = {
+            if (estado) {
+                onClick()
+            } else {
+                permissionState.launchPermissionRequest()
+            }
+        },
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (uiState.localizacaoObtida) Color(0xFF4CAF50) else Color.Gray
+        )
+    ) {
+        Icon(imageVector = Icons.Default.LocationOn, contentDescription = "Localização")
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(if (uiState.localizacaoObtida) "Localização Obtida" else "Obter localização atual")
+    }
+}
+
 
 @Composable
 private fun BotaoSelecionarImagem(viewModel: PostagemUtil) {
@@ -169,87 +253,6 @@ private fun BotaoSelecionarImagem(viewModel: PostagemUtil) {
         }
 
 
-    }
-}
-
-@Composable
-private fun CampoDescricao(viewModel: PostagemUtil) {
-    val estado by viewModel.uiState.collectAsState()
-    OutlinedTextField(
-        value = estado.descricao,
-        onValueChange = viewModel::atualizarDescricao,
-        label = { Text("Descrição") },
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(150.dp),
-        maxLines = 5
-    )
-}
-
-@Composable
-private fun SeletorCategoria(viewModel: PostagemUtil) {
-    val estado by viewModel.uiState.collectAsState()
-    var expandido by remember { mutableStateOf(false) }
-
-    Column {
-        Text(text = "Categoria", style = MaterialTheme.typography.bodyLarge)
-
-        Box {
-            OutlinedButton(
-                onClick = { expandido = true },
-                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
-                shape = RectangleShape
-            ) {
-                Text(estado.categoriaSelecionada.ifEmpty { "Selecione a categoria" })
-            }
-
-            DropdownMenu(
-                expanded = expandido,
-                onDismissRequest = { expandido = false }
-            ) {
-                estado.categorias.forEach { categoria ->
-                    DropdownMenuItem(
-                        text = { Text(categoria) },
-                        onClick = {
-                            viewModel.atualizarCategoria(categoria)
-                            expandido = false
-                        }
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun BotaoLocalizacao(
-    carregando: Boolean,
-    permissionState: PermissionState,
-    onClick: () -> Unit
-) {
-    val estado by rememberUpdatedState(newValue = permissionState.status.isGranted)
-    val uiState by viewModel<PostagemUtil>().uiState.collectAsState()
-
-    Button(
-        onClick = {
-            if (estado) {
-                onClick()
-            } else {
-                permissionState.launchPermissionRequest()
-            }
-        },
-        modifier = Modifier.fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = if (uiState.localizacaoObtida) Color(0xFF4CAF50) else MidBlue
-        )
-    ) {
-        if (carregando) {
-            CircularProgressIndicator()
-        } else {
-            Icon(imageVector = Icons.Default.LocationOn, contentDescription = "Localização")
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(if (uiState.localizacaoObtida) "Localização obtida" else "Obter localização atual")
-        }
     }
 }
 
