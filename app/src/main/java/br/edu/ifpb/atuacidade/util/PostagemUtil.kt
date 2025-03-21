@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import br.edu.ifpb.atuacidade.util.fetchAddress
 
 class PostagemUtil(application: Application) : AndroidViewModel(application) {
 
@@ -61,20 +60,6 @@ class PostagemUtil(application: Application) : AndroidViewModel(application) {
                         erro = null,
                         localizacaoObtida = true
                     )
-                    //teste de transformação das coordenadas (funcionando, ver no logcat)
-                    fetchAddress(-23.55052, -46.633308) { address ->
-                        if (address != null) {
-                            Log.d("API", "Número: ${address.house_number}")
-                            Log.d("API", "Rua: ${address.road}")
-                            Log.d("API", "Bairro: ${address.suburb}")
-                            Log.d("API", "Cidade: ${address.city}")
-                            Log.d("API", "Estado: ${address.state}")
-                            Log.d("API", "CEP: ${address.postcode}")
-                            Log.d("API", "País: ${address.country}")
-                        } else {
-                            Log.e("API", "Erro ao obter endereço")
-                        }
-                    }
                 } ?: run {
                     _uiState.value = _uiState.value.copy(
                         erro = "Não foi possível obter a localização"
