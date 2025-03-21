@@ -55,27 +55,26 @@ class PostagemUtil(application: Application) : AndroidViewModel(application) {
             try {
                 val location = fusedLocationClient.lastLocation.await()
                 location?.let {
-                    fetchAddress(it.latitude, it.longitude) { address ->
+                    _uiState.value = _uiState.value.copy(
+                        latitude = it.latitude,
+                        longitude = it.longitude,
+                        erro = null,
+                        localizacaoObtida = true
+                    )
+                    //teste de transformação das coordenadas (funcionando, ver no logcat)
+                    fetchAddress(-23.55052, -46.633308) { address ->
                         if (address != null) {
-                            _uiState.value = _uiState.value.copy(
-                                latitude = it.latitude,
-                                longitude = it.longitude,
-                                erro = null,
-                                dadosEndereco =
-                                        "Rua: ${address.road},\n" +
-                                        "Número: ${address.house_number},\n" +
-                                        "Bairro: ${address.suburb},\n" +
-                                        "Cidade: ${address.city}\n" +
-                                        "CEP: ${address.postcode}",
-                                localizacaoObtida = true
-                            )
+                            Log.d("API", "Número: ${address.house_number}")
+                            Log.d("API", "Rua: ${address.road}")
+                            Log.d("API", "Bairro: ${address.suburb}")
+                            Log.d("API", "Cidade: ${address.city}")
+                            Log.d("API", "Estado: ${address.state}")
+                            Log.d("API", "CEP: ${address.postcode}")
+                            Log.d("API", "País: ${address.country}")
                         } else {
-                            _uiState.value = _uiState.value.copy(
-                                erro = "Não foi possível obter a localização"
-                            )
+                            Log.e("API", "Erro ao obter endereço")
                         }
                     }
-
                 } ?: run {
                     _uiState.value = _uiState.value.copy(
                         erro = "Não foi possível obter a localização"
@@ -180,6 +179,5 @@ data class PostagemUiState(
     val erro: String? = null,
     val sucesso: Boolean = false,
     val localizacaoObtida: Boolean = false,
-    val dadosEndereco: String? = null,
     val categorias: List<String> = emptyList()
 )

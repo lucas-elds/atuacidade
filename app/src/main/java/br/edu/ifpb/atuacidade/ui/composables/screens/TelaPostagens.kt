@@ -121,11 +121,6 @@ fun TelaPostagens(
                         Text(text = it, color = MaterialTheme.colorScheme.error)
                     }
                 }
-                item {
-                    estado.dadosEndereco?.let {
-                        Text(text = it)
-                    }
-                }
                 item { BotaoEnviar(estado.carregando) { viewModel.enviarPostagem() } }
             }
         }
