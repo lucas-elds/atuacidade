@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.ModeComment
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,22 +25,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.edu.ifpb.atuacidade.data.model.Post
-import br.edu.ifpb.atuacidade.service.PostsDAO
 import br.edu.ifpb.atuacidade.ui.composables.screens.SessaoUsuario
-import br.edu.ifpb.atuacidade.util.apoiar
-import br.edu.ifpb.atuacidade.util.retirarApoio
-import br.edu.ifpb.atuacidade.util.nomeAutor
 import br.edu.ifpb.atuacidade.util.qntApoios
 import coil.compose.rememberAsyncImagePainter
-import kotlinx.coroutines.launch
 import br.edu.ifpb.atuacidade.util.fetchAddress
 import br.edu.ifpb.atuacidade.util.postsDAO
+import br.edu.ifpb.atuacidade.ui.theme.MidBlue
+import br.edu.ifpb.atuacidade.util.apoiar
+import br.edu.ifpb.atuacidade.util.retirarApoio
+import br.edu.ifpb.atuacidade.util.usernameAutor
+import kotlinx.coroutines.launch
 
 @Composable
-fun CardPost(post: Post, onPostDeleted: () -> Unit) {
+fun CardPost(post: Post, onClick: () -> Unit, onPostDeleted: () -> Unit) {
     val context = LocalContext.current
-    var expanded by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
+    var expanded by remember { mutableStateOf(false) }
 
     var apoios = remember { mutableIntStateOf(0) }
     var nickname = remember { mutableStateOf("") }
@@ -49,12 +50,12 @@ fun CardPost(post: Post, onPostDeleted: () -> Unit) {
     val usuarioLogadoId = SessaoUsuario.usuarioLogado?.id
 
     LaunchedEffect(Unit) {
-        nomeAutor(post.autorId) { resultado -> nickname.value = resultado }
+        usernameAutor(post.autorId) { resultado -> nickname.value = resultado }
         usuarioApoiou(post.id!!, usuarioLogadoId!!) { resultado -> postApoiado.value = resultado }
         qntApoios(post.id!!) { resultado -> apoios.intValue = resultado.size }
         fetchAddress(post.localizacao.latitude, post.localizacao.longitude) { resultado ->
             endereco.value = resultado?.let {
-                "Rua: ${it.road} | Bairro: ${it.suburb} | Cidade: ${it.city}"
+                "Bairro: ${it.suburb} | Cidade: ${it.city}"
             } ?: "Endereço não encontrado"
         }
     }
@@ -218,6 +219,101 @@ fun CardPost(post: Post, onPostDeleted: () -> Unit) {
                 }
             }
         }
+
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 15.dp),
+            thickness = 1.dp,
+            color = Color.Gray
+        )
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(5.dp),
+            modifier = Modifier.padding(20.dp)
+        ){
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Total de apoios: ${apoios.intValue}",
+                    color = Color.White
+                )
+            }
+
+            Button(
+                onClick = {
+                    if(postApoiado.value){
+                        retirarApoio(post, usuarioLogadoId!!) {
+                            coroutineScope.launch{
+                                usuarioApoiou(post.id!!, usuarioLogadoId!!) { resultado -> postApoiado.value = resultado }
+                                qntApoios(post.id!!){ resultado -> apoios.intValue = resultado.size }
+                            }
+
+                            Toast.makeText(
+                                context,
+                                "Você deixou de apoiar",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } else {
+                        apoiar(post, usuarioLogadoId!!){
+                            coroutineScope.launch{
+                                usuarioApoiou(post.id!!, usuarioLogadoId!!) { resultado -> postApoiado.value = resultado }
+                                qntApoios(post.id!!){ resultado -> apoios.intValue = resultado.size }
+                            }
+
+                            Toast.makeText(
+                                context,
+                                "Você apoiou!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (postApoiado.value) Color(0xFFAD1212) else Color(0xFF3ea52e)
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = if (postApoiado.value) Icons.Filled.Close else Icons.Filled.Check,
+                    contentDescription = "Apoio",
+                    tint = Color.White
+                )
+
+                Spacer(modifier = Modifier.width(4.dp))
+
+                Text(
+                    text = if (postApoiado.value) "Retirar apoio" else "Apoiar",
+                    color = Color.White
+                )
+            }
+
+            Button(
+                onClick = {
+                    onClick()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MidBlue
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ModeComment,
+                    contentDescription = "Comentários",
+                    tint = Color.White
+                )
+
+                Spacer(modifier = Modifier.width(4.dp))
+
+                Text(
+                    text = "Comentários",
+                    color = Color.White
+                )
+            }
+        }
     }
 }
-
