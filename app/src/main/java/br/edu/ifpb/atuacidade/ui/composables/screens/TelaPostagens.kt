@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,6 +53,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.edu.ifpb.atuacidade.ui.theme.MidBlue
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -139,7 +142,18 @@ private fun BotaoSelecionarImagem(viewModel: PostagemUtil) {
             viewModel.atualizarImagemSelecionada(it)
         }
     }
-    Column {
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        estado.imagemSelecionada?.let { uri ->
+            Image(
+                painter = rememberAsyncImagePainter(uri),
+                contentDescription = "Imagem selecionada",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+            )
+        }
+
         Button(
             onClick = { launcher.launch("image/*") },
             modifier = Modifier
@@ -167,10 +181,9 @@ private fun BotaoSelecionarImagem(viewModel: PostagemUtil) {
                 )
             }
         }
-
-
     }
 }
+
 
 @Composable
 private fun CampoDescricao(viewModel: PostagemUtil) {
