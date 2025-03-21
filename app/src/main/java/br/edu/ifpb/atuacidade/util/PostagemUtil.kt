@@ -52,6 +52,7 @@ class PostagemUtil(application: Application) : AndroidViewModel(application) {
 
     fun obterLocalizacao(context: Context) {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(carregandoLocalizacao = true)
             try {
                 val location = fusedLocationClient.lastLocation.await()
                 location?.let {
@@ -59,41 +60,24 @@ class PostagemUtil(application: Application) : AndroidViewModel(application) {
                         latitude = it.latitude,
                         longitude = it.longitude,
                         erro = null,
-                        localizacaoObtida = true
+                        localizacaoObtida = true,
+                        carregandoLocalizacao = false
                     )
-                    fetchAddress(it.latitude, it.longitude) { address ->
-                        if (address != null) {
-                            _uiState.value = _uiState.value.copy(
-                                latitude = it.latitude,
-                                longitude = it.longitude,
-                                erro = null,
-                                dadosEndereco =
-                                        "Rua: ${address.road},\n" +
-                                        "Número: ${address.house_number},\n" +
-                                        "Bairro: ${address.suburb},\n" +
-                                        "Cidade: ${address.city}\n" +
-                                        "CEP: ${address.postcode}",
-                                localizacaoObtida = true
-                            )
-                        } else {
-                            _uiState.value = _uiState.value.copy(
-                                erro = "Não foi possível obter a localização"
-                            )
-                        }
-                    }
-
                 } ?: run {
                     _uiState.value = _uiState.value.copy(
-                        erro = "Não foi possível obter a localização"
+                        erro = "Não foi possível obter a localização",
+                        carregandoLocalizacao = false //
                     )
                 }
             } catch (e: SecurityException) {
                 _uiState.value = _uiState.value.copy(
-                    erro = "Permissão de localização necessária"
+                    erro = "Permissão de localização necessária",
+                    carregandoLocalizacao = false
                 )
             }
         }
     }
+
 
 
     fun enviarPostagem() {
@@ -183,9 +167,9 @@ data class PostagemUiState(
     val latitude: Double? = null,
     val longitude: Double? = null,
     val carregando: Boolean = false,
+    val carregandoLocalizacao: Boolean = false,
     val erro: String? = null,
     val sucesso: Boolean = false,
     val localizacaoObtida: Boolean = false,
-    val dadosEndereco: String? = null,
     val categorias: List<String> = emptyList()
 )

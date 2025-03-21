@@ -13,7 +13,7 @@ data class Usuario(
     val endereco: Endereco? = null,
     val username: String = "",
     val senha: String = "",
-    val fotoPerfil: String = ""
+    val fotoPerfil: String? = null
 ) {
     constructor() : this("", "", "", "", null, "", "", "")
 }

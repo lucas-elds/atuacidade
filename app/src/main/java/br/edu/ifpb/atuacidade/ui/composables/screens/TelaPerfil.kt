@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import br.edu.ifpb.atuacidade.service.PostsDAO
 import br.edu.ifpb.atuacidade.service.UsuarioDAO
+import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,14 +76,27 @@ fun TelaPerfil(navController: NavController) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                imageVector = Icons.Filled.AccountCircle,
-                contentDescription = "Foto do perfil",
+            Box(
                 modifier = Modifier
                     .size(100.dp)
-                    .clip(CircleShape),
-                tint = Color.Gray
-            )
+                    .clip(CircleShape)
+            ) {
+                if (!usuarioLogado?.fotoPerfil.isNullOrEmpty()) {
+                    AsyncImage(
+                        model = usuarioLogado?.fotoPerfil,
+                        contentDescription = "Foto do perfil",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Filled.AccountCircle,
+                        contentDescription = "Ícone de perfil",
+                        modifier = Modifier.fillMaxSize(),
+                        tint = Color.Gray
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -152,7 +167,6 @@ fun TelaPerfil(navController: NavController) {
         )
     }
 }
-
 
 private fun deletarUsuarioEPosts(usuarioId: String, context: android.content.Context, onComplete: () -> Unit) {
     val usuarioDAO = UsuarioDAO()

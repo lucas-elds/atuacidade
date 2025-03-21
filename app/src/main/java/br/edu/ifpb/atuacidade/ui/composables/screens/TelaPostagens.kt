@@ -119,11 +119,6 @@ fun TelaPostagens(
                         Text(text = it, color = MaterialTheme.colorScheme.error)
                     }
                 }
-                item {
-                    estado.dadosEndereco?.let {
-                        Text(text = it)
-                    }
-                }
                 item { BotaoEnviar(estado.carregando) { viewModel.enviarPostagem() } }
             }
         }
@@ -236,7 +231,7 @@ private fun SeletorCategoria(viewModel: PostagemUtil) {
 
 @Composable
 private fun BotaoLocalizacao(
-    carregando: Boolean,
+    carregandoLocalizacao: Boolean,
     permissionState: PermissionState,
     onClick: () -> Unit
 ) {
@@ -256,7 +251,7 @@ private fun BotaoLocalizacao(
             containerColor = if (uiState.localizacaoObtida) Color(0xFF4CAF50) else MidBlue
         )
     ) {
-        if (carregando) {
+        if (carregandoLocalizacao) {
             CircularProgressIndicator()
         } else {
             Icon(imageVector = Icons.Default.LocationOn, contentDescription = "Localização")
@@ -265,6 +260,7 @@ private fun BotaoLocalizacao(
         }
     }
 }
+
 
 @Composable
 private fun BotaoEnviar(carregando: Boolean, onClick: () -> Unit) {
