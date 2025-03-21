@@ -39,12 +39,17 @@ fun TelaPrincipal(navController: NavController) {
     var listaPosts by remember { mutableStateOf<List<Post>>(emptyList()) }
 
     LaunchedEffect(Unit) {
-        postsDAO.buscar { posts -> listaPosts = posts }
+        postsDAO.buscar { posts ->
+            listaPosts = posts.filter { it.status == "Pendente" }
+        }
     }
 
     AtuacidadeTheme {
         Box(modifier = Modifier.fillMaxSize()) {
-            Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 BarraFixaTopo(navController)
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -62,7 +67,9 @@ fun TelaPrincipal(navController: NavController) {
 
                 Button(
                     onClick = {
-                        navController.navigate("principal")
+                        postsDAO.buscar { posts ->
+                            listaPosts = posts.filter { it.status == "Pendente" }
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -73,9 +80,7 @@ fun TelaPrincipal(navController: NavController) {
                         contentDescription = "Atualizar",
                         tint = Color.White
                     )
-
                     Spacer(modifier = Modifier.width(4.dp))
-
                     Text(
                         text = "Atualizar",
                         color = Color.White
@@ -96,11 +101,13 @@ fun TelaPrincipal(navController: NavController) {
                         .padding(bottom = 40.dp)
                 ) {
                     items(listaPosts) { post ->
-                        CardPost(post)
+                        CardPost(post) {
+                            listaPosts = listaPosts.filter { it.id != post.id }
+                        }
                     }
                 }
-            }
 
+            }
             FloatingActionButton(
                 onClick = { navController.navigate("postagens") },
                 modifier = Modifier
@@ -117,6 +124,8 @@ fun TelaPrincipal(navController: NavController) {
                     tint = Color.White
                 )
             }
+
         }
+
     }
 }

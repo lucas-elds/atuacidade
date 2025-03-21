@@ -98,5 +98,12 @@ class PostsDAO {
             }
     }
 
+    fun excluir(postId: String, callback: (Boolean) -> Unit) {
+        posts.document(postId).delete()
+            .addOnSuccessListener { callback(true) }
+            .addOnFailureListener { callback(false) }
+    }
+
+
 
 }
